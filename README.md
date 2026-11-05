@@ -14,6 +14,7 @@ O projeto é desenvolvido para a disciplina de Análise e Projeto de Sistemas e 
 ## Documentação (Etapa 05)
 
 - [Documento de Requisitos (completo)](docs/documento-de-requisitos.md)
+- [Documento de Requisitos (.docx para entrega)](docs/DocumentoDeRequisitosEmiteJa.docx)
 
 ## Identificação da Equipe
 
