@@ -3,16 +3,18 @@
 **UNIVERSIDADE FEDERAL DA PARAÍBA**
 **CENTRO DE CIÊNCIAS APLICADAS E EDUCAÇÃO**
 **DEPARTAMENTO DE CIÊNCIAS EXATAS**
-**MODELAGEM DE DADOS**
+**ANÁLISE E PROJETO DE SISTEMAS**
 
 ## Visão Geral do Projeto
 
-Nosso projeto tem como objetivo especificar e documentar o **NFCloud**, um sistema para automação da emissão de notas fiscais. A solução busca reduzir o esforço manual e os erros no processo de faturamento, permitindo gerar, validar e enviar notas fiscais de forma rápida e padronizada. O sistema também pretende centralizar o histórico de documentos emitidos e apoiar o cumprimento das obrigações fiscais do cliente. Os requisitos foram levantados a partir das necessidades reais identificadas em entrevista com o cliente Hugo Soares.
+O **EmiteJá** é um sistema voltado a pequenos comércios e prestadores de serviço que ainda preenchem notas fiscais à mão, um processo lento e sujeito a erros de digitação, de cálculo de impostos e de cadastro de clientes. A proposta é que, a partir de uma venda ou serviço registrado, o sistema monte a nota automaticamente com os dados já cadastrados, confira as informações obrigatórias antes da emissão e encaminhe o documento ao cliente final. Todas as notas emitidas ficam organizadas em um só lugar, com busca por período, cliente ou situação, facilitando o fechamento mensal e a conferência com a contabilidade.
+
+O projeto é desenvolvido para a disciplina de Análise e Projeto de Sistemas e cobre a especificação (visão e requisitos), a modelagem com casos de uso e diagramas UML e um protótipo funcional. O cliente considerado é fictício: uma pequena loja de materiais elétricos com emissão diária de notas.
 
 ## Identificação da Equipe
 
 - **Equipe:** Grupo04
-- **Projeto:** Automação de Emissão de Nota Fiscal (NFCloud)
+- **Projeto:** Automação de Emissão de Nota Fiscal (EmiteJá)
 - **Repositório:** https://github.com/Abraaog/AutomacaoNotaFiscal
 - **Branch principal:** `main`
 
