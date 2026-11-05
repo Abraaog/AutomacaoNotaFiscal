@@ -13,10 +13,7 @@ O projeto é desenvolvido para a disciplina de Análise e Projeto de Sistemas e 
 
 ## Documentação (Etapa 05)
 
-- [Documento de Visão](docs/visao.md)
-- [Documento de Requisitos](docs/requisitos.md)
-- [Diagrama e Especificação de Casos de Uso](docs/casos-de-uso.md)
-- [Diagrama de Atividades: Emitir NF-e](docs/diagrama-atividades.md)
+- [Documento de Requisitos (completo)](docs/documento-de-requisitos.md)
 
 ## Identificação da Equipe
 

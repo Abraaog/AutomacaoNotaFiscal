@@ -315,3 +315,74 @@ Cenário alternativo: 2.1 Notas pendentes ou rejeitadas: avisa a Gerente antes d
 Cenário excepcional: 2.2 Nenhuma nota no mês: não gera o pacote.
 **Pós-condição:** Pacote disponível e registrado no histórico.
 
+## 6. Diagramas de Atividades
+
+**Figura 5: Processo de emissão de NF-e a partir da venda**
+
+```mermaid
+flowchart TD
+    I((Início)) --> A[Vendedor registra a venda]
+    A --> B[Seleciona Gerar nota]
+    B --> C[Sistema monta a nota com dados da venda e cadastros]
+    C --> D{Campos obrigatórios válidos?}
+    D -- Não --> D1[Sistema lista os erros]
+    D1 --> D2[Vendedor corrige o cadastro]
+    D2 --> C
+    D -- Sim --> F[Sistema assina e envia à SEFAZ]
+    F --> G{SEFAZ respondeu?}
+    G -- Não --> G1[Nota fica Pendente]
+    G1 --> G2[Reenvio automático em 2 min]
+    G2 --> F
+    G -- Sim --> H{Autorizada?}
+    H -- Não --> H1[Sistema exibe motivo da rejeição]
+    H1 --> H2[Vendedor corrige]
+    H2 --> C
+    H -- Sim --> J[Armazena XML e gera DANFE]
+    J --> K{Cliente tem e-mail?}
+    K -- Sim --> L[Envia DANFE e XML por e-mail]
+    K -- Não --> M[Oferece impressão do DANFE]
+    L --> FIM((Fim))
+    M --> FIM
+```
+
+**Figura 6: Processo de cadastro de cliente**
+
+```mermaid
+flowchart TD
+    I((Início)) --> A[Vendedor informa CPF ou CNPJ]
+    A --> B{Dígitos válidos?}
+    B -- Não --> B1[Exibe erro] --> FIM((Fim))
+    B -- Sim --> C{Já cadastrado?}
+    C -- Sim --> C1[Abre cadastro para edição] --> F
+    C -- Não --> D{É CNPJ?}
+    D -- Sim --> D1{Consulta CNPJ respondeu?}
+    D1 -- Sim --> D2[Preenche razão social e endereço] --> E
+    D1 -- Não --> E
+    D -- Não --> E[Vendedor completa os dados]
+    E --> F[Vendedor confirma]
+    F --> G[Sistema salva o cliente] --> FIM
+```
+
+**Figura 7: Processo de cancelamento e fechamento mensal**
+
+```mermaid
+flowchart TD
+    I((Início)) --> Q{Qual operação?}
+    Q -- Cancelar nota --> A[Gerente localiza a nota e informa justificativa]
+    A --> B{Dentro de 24h e justificativa válida?}
+    B -- Não --> B1[Bloqueia cancelamento] --> FIM((Fim))
+    B -- Sim --> C[Envia evento à SEFAZ]
+    C --> D{Homologado?}
+    D -- Não --> D1[Mantém Autorizada e mostra motivo] --> FIM
+    D -- Sim --> E[Marca Cancelada e avisa o cliente] --> FIM
+    Q -- Fechamento mensal --> F[Contador escolhe o mês]
+    F --> G{Há notas pendentes ou rejeitadas?}
+    G -- Sim --> G1[Avisa a Gerente] --> H
+    G -- Não --> H[Reúne notas autorizadas e canceladas]
+    H --> J[Gera resumo PDF e compacta em .zip]
+    J --> K[Contador baixa o pacote] --> FIM
+```
+
+## 7. Protótipo do Sistema
+
+O protótipo de telas e a implementação parcial estão em desenvolvimento nas issues #6 (telas) e #7 (código e testes) e serão referenciados aqui quando publicados.
