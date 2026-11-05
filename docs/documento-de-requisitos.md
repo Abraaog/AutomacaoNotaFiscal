@@ -104,3 +104,231 @@ Para atender ao desafio de variar uma política de cálculo, o EmiteJá oferece 
 
 A gerente escolhe a variante ativa (US10). A variante é aplicada no momento da emissão e fica gravada no documento (RN06), o que permite comparar o efeito de cada política sobre as mesmas vendas.
 
+## 5. Modelo de Casos de Uso
+
+Os atores identificados estão descritos na Tabela 1.
+
+**Tabela 1: Atores**
+
+| Ator | Descrição |
+|---|---|
+| Vendedor | Funcionário da loja; consulta o estoque, cadastra clientes, registra vendas e acompanha os documentos. |
+| Gerente | Responsável pela loja; herda as funções do Vendedor e também mantém o estoque, cancela documentos e configura a política de imposto e o cenário do simulador. |
+| Contador | Profissional externo; consulta documentos e baixa o pacote mensal, sem poder alterar nada. |
+| Autorizador Simulado | Sistema externo simulado que recebe o documento pelo contrato de integração e responde com sucesso, rejeição ou indisponibilidade. |
+
+A seguir, os diagramas de casos de uso organizados por subsistema.
+
+**Figura 1: Subsistema Estoque e Cadastros**
+
+```mermaid
+flowchart LR
+    V["👤 Vendedor"]
+    G["👤 Gerente"]
+    subgraph Estoque e Cadastros
+        A1([Fazer login - US01])
+        A2([Consultar motos disponíveis - US03])
+        A3([Manter cliente - US04])
+        A4([Manter moto no estoque - US02])
+        A5([Validar chassi])
+    end
+    V --> A1
+    V --> A2
+    V --> A3
+    G --> A4
+    A4 -. «include» .-> A5
+    G -. herda de .-> V
+```
+
+**Figura 2: Subsistema Vendas e Emissão**
+
+```mermaid
+flowchart LR
+    V["👤 Vendedor"]
+    S[["Autorizador Simulado"]]
+    subgraph Vendas e Emissão
+        B1([Registrar e confirmar venda - US05<br/>UC01])
+        B2([Emitir documento fiscal simulado - US06<br/>UC02])
+        B3([Verificar duplicidade - US08])
+        B4([Calcular imposto pela política ativa])
+        B5([Corrigir e reenviar documento - US09])
+    end
+    V --> B1
+    B1 -. «include» .-> B2
+    B2 -. «include» .-> B3
+    B2 -. «include» .-> B4
+    B5 -. «extend» .-> B2
+    B2 --> S
+```
+
+**Figura 3: Subsistema Gestão de Documentos**
+
+```mermaid
+flowchart LR
+    V["👤 Vendedor"]
+    G["👤 Gerente"]
+    C["👤 Contador"]
+    S[["Autorizador Simulado"]]
+    subgraph Gestão de Documentos
+        C1([Acompanhar estado do documento - US07])
+        C2([Cancelar documento - US12<br/>UC03])
+        C3([Gerar pacote mensal - US13])
+    end
+    V --> C1
+    G --> C2
+    C --> C3
+    C2 -. «include» .-> C1
+    C2 --> S
+```
+
+**Figura 4: Subsistema Configuração Didática**
+
+```mermaid
+flowchart LR
+    G["👤 Gerente"]
+    subgraph Configuração Didática
+        D1([Configurar política e cenário - US10, US11<br/>UC04])
+        D2([Ver painel do mês - US14])
+    end
+    G --> D1
+    G --> D2
+```
+
+### 5.1 Descrição dos Casos de Uso
+
+**Subsistema:** Vendas e Emissão
+**Identificador do Caso de Uso:** UC01
+**Caso de Uso:** Registrar e confirmar venda
+**Descrição Sucinta:** Registra a venda de uma moto disponível para um cliente e, ao confirmar, dispara a emissão do documento.
+**Pré-condições:** Vendedor autenticado; moto Disponível; cliente cadastrado.
+
+| Nome do Fluxo | Pré-condição | Descrição |
+|---|---|---|
+| Venda de moto | Moto Disponível | 1. O Vendedor busca a moto no estoque e a seleciona. 2. Seleciona o cliente. 3. Informa a forma de pagamento. 4. O sistema exibe o resumo com valor da moto. 5. O Vendedor confirma a venda. 6. O sistema marca a moto como Reservada e inicia a emissão (UC02). |
+
+| Fluxo Relacionado | Variante | Descrição |
+|---|---|---|
+| Venda de moto | Passo 2: cliente não cadastrado | O Vendedor cadastra o cliente (Manter cliente) e retorna ao passo 2. |
+
+| Fluxo Relacionado | Condição de Exceção | Descrição |
+|---|---|---|
+| Venda de moto | Passo 5: moto deixou de estar Disponível | O sistema informa que a moto foi reservada em outra venda e cancela a operação (RN03). |
+
+**Subsistema:** Vendas e Emissão
+**Identificador do Caso de Uso:** UC02
+**Caso de Uso:** Emitir documento fiscal simulado
+**Descrição Sucinta:** Gera, valida e envia o documento da venda ao Autorizador Simulado, controlando estados e duplicidade.
+**Pré-condições:** Venda confirmada.
+
+| Nome do Fluxo | Pré-condição | Descrição |
+|---|---|---|
+| Emissão simulada | Venda confirmada | 1. O sistema verifica se a venda já tem documento (RN01). 2. Cria o documento em Rascunho com os dados da venda. 3. Calcula o imposto pela política ativa e grava a política usada (RN06). 4. Valida os dados (chassi, documento do cliente, valores). 5. Muda o estado para Processando e envia a requisição pelo contrato de integração. 6. O Autorizador Simulado responde com sucesso. 7. O sistema muda o estado para Autorizado, registra o protocolo e marca a moto como Vendida. |
+
+| Fluxo Relacionado | Variante | Descrição |
+|---|---|---|
+| Emissão simulada | Passo 1: venda já tem documento | O sistema devolve o documento existente e não envia nada ao autorizador (RN02). |
+| Emissão simulada | Passo 4: dados inválidos | O documento permanece em Rascunho com a lista de erros para correção. |
+
+| Fluxo Relacionado | Condição de Exceção | Descrição |
+|---|---|---|
+| Emissão simulada | Passo 6: resposta de rejeição | O estado passa a Rejeitado com código e motivo; o Vendedor corrige e reenvia o mesmo documento. |
+| Emissão simulada | Passo 6: autorizador indisponível | O estado passa a Pendente e o sistema reenvia automaticamente até 3 vezes (RN07). |
+
+**Subsistema:** Gestão de Documentos
+**Identificador do Caso de Uso:** UC03
+**Caso de Uso:** Cancelar documento
+**Descrição Sucinta:** Cancela um documento autorizado e desfaz a venda.
+**Pré-condições:** Gerente autenticada; documento Autorizado há menos de 24 horas.
+
+| Nome do Fluxo | Pré-condição | Descrição |
+|---|---|---|
+| Cancelamento | Documento Autorizado | 1. A Gerente localiza o documento. 2. Seleciona "Cancelar" e informa a justificativa. 3. O sistema verifica prazo e justificativa (RN08). 4. Envia o pedido de cancelamento ao Autorizador Simulado. 5. O autorizador confirma. 6. O sistema marca o documento como Cancelado, cancela a venda e devolve a moto a Disponível (RN09). |
+
+| Fluxo Relacionado | Variante | Descrição |
+|---|---|---|
+| Não se aplica. | Não se aplica. | Não se aplica. |
+
+| Fluxo Relacionado | Condição de Exceção | Descrição |
+|---|---|---|
+| Cancelamento | Passo 3: prazo expirado ou justificativa curta | O sistema bloqueia o cancelamento e informa o motivo. |
+| Cancelamento | Passo 5: autorizador indisponível | O documento continua Autorizado e a Gerente é avisada para tentar novamente. |
+
+**Subsistema:** Configuração Didática
+**Identificador do Caso de Uso:** UC04
+**Caso de Uso:** Configurar política e cenário
+**Descrição Sucinta:** Permite à Gerente escolher a política de cálculo de imposto ativa e o cenário de resposta do Autorizador Simulado.
+**Pré-condições:** Gerente autenticada.
+
+| Nome do Fluxo | Pré-condição | Descrição |
+|---|---|---|
+| Configuração | N/A | 1. A Gerente acessa "Configurações". 2. O sistema exibe a política ativa e o cenário atual do simulador. 3. A Gerente escolhe a variante A ou B e o cenário Sucesso, Rejeição ou Indisponível. 4. O sistema mostra um exemplo de cálculo com a variante escolhida. 5. A Gerente confirma e o sistema registra a alteração com data e usuário. |
+
+| Fluxo Relacionado | Variante | Descrição |
+|---|---|---|
+| Configuração | Passo 3: só o cenário é alterado | A política ativa permanece a mesma. |
+
+| Fluxo Relacionado | Condição de Exceção | Descrição |
+|---|---|---|
+| Configuração | Passo 5: há documentos em Processando | O sistema aplica a nova configuração somente às próximas emissões. |
+
+### 5.2 Modelo de Casos de Uso Expandido
+
+**Caso de Uso:** Registrar e confirmar venda · **Ator(es):** Vendedor
+**Finalidade:** Vender uma moto disponível e disparar a emissão. · **Pré-condição:** Moto Disponível; cliente cadastrado.
+
+| Ação do Ator | Resposta do Sistema |
+|---|---|
+| 1. Seleciona a moto e o cliente. | |
+| 2. Informa a forma de pagamento. | |
+| | 3. Exibe o resumo da venda. |
+| 4. Confirma a venda. | |
+| | 5. Marca a moto como Reservada e inicia a emissão. |
+
+Cenário alternativo: 1.1 Cliente não cadastrado: abre o cadastro e retorna.
+Cenário excepcional: 4.1 Moto reservada em outra venda: cancela a operação.
+**Pós-condição:** Venda confirmada, moto Reservada e documento em emissão.
+
+**Caso de Uso:** Emitir documento fiscal simulado · **Ator(es):** Vendedor, Autorizador Simulado
+**Finalidade:** Obter o documento autorizado da venda sem duplicidade. · **Pré-condição:** Venda confirmada.
+
+| Ação do Ator | Resposta do Sistema |
+|---|---|
+| 1. Solicita a emissão (automática após a venda ou pelo botão "Emitir"). | |
+| | 2. Verifica se já existe documento para a venda. |
+| | 3. Cria o Rascunho, calcula o imposto e valida os dados. |
+| | 4. Muda para Processando e envia pelo contrato de integração. |
+| | 5. Recebe sucesso, muda para Autorizado e marca a moto como Vendida. |
+
+Cenário alternativo: 2.1 Documento já existe: devolve o existente sem reenviar. 3.1 Dados inválidos: mantém Rascunho com os erros.
+Cenário excepcional: 5.1 Rejeição: estado Rejeitado com motivo. 5.2 Indisponível: estado Pendente com reenvio automático.
+**Pós-condição:** Um único documento Autorizado vinculado à venda.
+
+**Caso de Uso:** Cancelar documento · **Ator(es):** Gerente, Autorizador Simulado
+**Finalidade:** Desfazer uma venda com documento autorizado. · **Pré-condição:** Documento Autorizado há menos de 24 horas.
+
+| Ação do Ator | Resposta do Sistema |
+|---|---|
+| 1. Localiza o documento e seleciona "Cancelar". | |
+| 2. Informa a justificativa. | |
+| | 3. Verifica prazo e justificativa. |
+| | 4. Envia o cancelamento ao autorizador e recebe a confirmação. |
+| | 5. Marca Cancelado, cancela a venda e devolve a moto ao estoque. |
+
+Cenário excepcional: 3.1 Prazo expirado ou justificativa curta: bloqueia. 4.1 Autorizador indisponível: mantém Autorizado.
+**Pós-condição:** Documento Cancelado e moto Disponível.
+
+**Caso de Uso:** Configurar política e cenário · **Ator(es):** Gerente
+**Finalidade:** Alternar a política didática de imposto e o comportamento do simulador. · **Pré-condição:** Gerente autenticada.
+
+| Ação do Ator | Resposta do Sistema |
+|---|---|
+| 1. Acessa "Configurações". | |
+| | 2. Exibe política ativa e cenário atual. |
+| 3. Escolhe a variante e o cenário. | |
+| | 4. Mostra um exemplo de cálculo. |
+| 5. Confirma. | |
+| | 6. Registra a alteração com data e usuário. |
+
+Cenário excepcional: 5.1 Documentos em Processando: aplica só às próximas emissões.
+**Pós-condição:** Nova configuração ativa para as próximas emissões.
+
