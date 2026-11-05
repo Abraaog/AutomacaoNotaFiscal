@@ -11,6 +11,13 @@ O **EmiteJá** é um sistema voltado a pequenos comércios e prestadores de serv
 
 O projeto é desenvolvido para a disciplina de Análise e Projeto de Sistemas e cobre a especificação (visão e requisitos), a modelagem com casos de uso e diagramas UML e um protótipo funcional. O cliente considerado é fictício: uma pequena loja de materiais elétricos com emissão diária de notas.
 
+## Documentação (Etapa 05)
+
+- [Documento de Visão](docs/visao.md)
+- [Documento de Requisitos](docs/requisitos.md)
+- [Diagrama e Especificação de Casos de Uso](docs/casos-de-uso.md)
+- [Diagrama de Atividades: Emitir NF-e](docs/diagrama-atividades.md)
+
 ## Identificação da Equipe
 
 - **Equipe:** Grupo04
