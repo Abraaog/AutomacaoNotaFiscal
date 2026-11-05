@@ -332,3 +332,111 @@ Cenário excepcional: 3.1 Prazo expirado ou justificativa curta: bloqueia. 4.1 A
 Cenário excepcional: 5.1 Documentos em Processando: aplica só às próximas emissões.
 **Pós-condição:** Nova configuração ativa para as próximas emissões.
 
+## 6. Diagramas de Atividades
+
+**Figura 5: Processo de venda e emissão simulada**
+
+```mermaid
+flowchart TD
+    I((Início)) --> A[Vendedor seleciona moto e cliente]
+    A --> B{Moto Disponível?}
+    B -- Não --> B1[Informa que a moto está reservada] --> FIM((Fim))
+    B -- Sim --> C[Confirma a venda e reserva a moto]
+    C --> D{Venda já tem documento?}
+    D -- Sim --> D1[Devolve o documento existente] --> FIM
+    D -- Não --> E[Cria documento em Rascunho]
+    E --> F[Calcula imposto pela política ativa]
+    F --> G{Dados válidos?}
+    G -- Não --> G1[Mantém Rascunho com erros]
+    G1 --> G2[Vendedor corrige] --> F
+    G -- Sim --> H[Estado Processando e envio ao Autorizador Simulado]
+    H --> K{Resposta}
+    K -- Sucesso --> L[Estado Autorizado e moto Vendida] --> FIM
+    K -- Rejeição --> M[Estado Rejeitado com motivo]
+    M --> G2
+    K -- Indisponível --> N[Estado Pendente]
+    N --> N1{Tentativas menores que 3?}
+    N1 -- Sim --> N2[Aguarda 1 minuto] --> H
+    N1 -- Não --> N3[Reenvio manual pelo Vendedor] --> H
+```
+
+**Figura 6: Processo de cancelamento de documento**
+
+```mermaid
+flowchart TD
+    I((Início)) --> A[Gerente localiza o documento]
+    A --> B[Informa a justificativa]
+    B --> C{Dentro de 24h e justificativa válida?}
+    C -- Não --> C1[Bloqueia o cancelamento] --> FIM((Fim))
+    C -- Sim --> D[Envia cancelamento ao Autorizador Simulado]
+    D --> E{Confirmado?}
+    E -- Não --> E1[Mantém Autorizado e avisa a Gerente] --> FIM
+    E -- Sim --> F[Documento Cancelado]
+    F --> G[Venda cancelada]
+    G --> H[Moto volta a Disponível] --> FIM
+```
+
+## 7. Estados de Processamento e Contrato de Integração
+
+### 7.1 Estados do Documento Fiscal
+
+**Figura 7: Diagrama de estados do documento fiscal**
+
+```mermaid
+stateDiagram-v2
+    [*] --> Rascunho: venda confirmada
+    Rascunho --> Rascunho: dados inválidos
+    Rascunho --> Processando: dados válidos e envio
+    Processando --> Autorizado: resposta de sucesso
+    Processando --> Rejeitado: resposta de rejeição
+    Processando --> Pendente: autorizador indisponível
+    Pendente --> Processando: reenvio
+    Rejeitado --> Processando: correção e reenvio
+    Autorizado --> Cancelado: cancelamento confirmado
+    Cancelado --> [*]
+```
+
+| Estado | Significado | Pode reenviar? | Situação da moto |
+|---|---|---|---|
+| Rascunho | Documento criado, ainda não enviado ou com erros de validação. | Sim, após correção | Reservada |
+| Processando | Requisição enviada e aguardando resposta. Novos pedidos de emissão devolvem este mesmo documento. | Não | Reservada |
+| Autorizado | Autorizador simulado aceitou o documento e devolveu protocolo. | Não | Vendida |
+| Rejeitado | Autorizador simulado recusou com código e motivo. | Sim, após correção | Reservada |
+| Pendente | Autorizador não respondeu; reenvio automático em andamento. | Sim | Reservada |
+| Cancelado | Cancelamento confirmado pelo autorizador. | Não | Disponível |
+
+### 7.2 Contrato de Integração Simulado
+
+A comunicação com o Autorizador Simulado usa requisições e respostas em JSON. O simulador não acessa nenhum serviço externo; seu comportamento é definido pelo cenário configurado pela Gerente (UC04).
+
+**Requisição de emissão** (`POST /autorizador/documentos`):
+
+```json
+{
+  "chaveIdempotencia": "VENDA-2026-000123",
+  "venda": { "codigo": "2026-000123", "data": "2026-11-05", "formaPagamento": "PIX" },
+  "destinatario": { "documento": "123.456.789-09", "nome": "Cliente Exemplo" },
+  "item": { "chassi": "9C2KC2210RR000123", "descricao": "Moto 300 cc, 2026, vermelha", "cilindrada": 300 },
+  "valores": { "venda": 25000.00, "politicaImposto": "B_POR_CILINDRADA", "aliquota": 0.12, "imposto": 3000.00 }
+}
+```
+
+**Resposta de sucesso** (HTTP 200):
+
+```json
+{ "status": "AUTORIZADO", "protocolo": "SIM-000981", "dataHora": "2026-11-05T14:32:10", "aviso": "SEM VALOR FISCAL - SIMULAÇÃO" }
+```
+
+**Resposta de falha por rejeição** (HTTP 422):
+
+```json
+{ "status": "REJEITADO", "codigo": "R01", "motivo": "Chassi com formato inválido" }
+```
+
+**Resposta de falha por indisponibilidade** (HTTP 503): sem corpo; o EmiteJá trata como Pendente (RN07).
+
+**Requisição repetida com a mesma chave de idempotência:** o simulador devolve a mesma resposta da primeira requisição, sem gerar novo protocolo. Isso reforça, do lado do autorizador, a prevenção de duplicidade garantida pelo EmiteJá (RN01, RN02).
+
+## 8. Protótipo do Sistema
+
+O protótipo de telas e a implementação parcial da emissão simulada, com testes das duas variantes da política e dos três cenários do simulador, estão em desenvolvimento nas issues #6 (telas) e #7 (código e testes) e serão referenciados aqui quando publicados.

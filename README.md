@@ -1,4 +1,4 @@
-# Automação de Emissão de Nota Fiscal
+# Automação de Emissão de Nota Fiscal e Gestão de Venda de Motos
 
 **UNIVERSIDADE FEDERAL DA PARAÍBA**
 **CENTRO DE CIÊNCIAS APLICADAS E EDUCAÇÃO**
@@ -7,9 +7,9 @@
 
 ## Visão Geral do Projeto
 
-O **EmiteJá** é um sistema voltado a pequenos comércios e prestadores de serviço que ainda preenchem notas fiscais à mão, um processo lento e sujeito a erros de digitação, de cálculo de impostos e de cadastro de clientes. A proposta é que, a partir de uma venda ou serviço registrado, o sistema monte a nota automaticamente com os dados já cadastrados, confira as informações obrigatórias antes da emissão e encaminhe o documento ao cliente final. Todas as notas emitidas ficam organizadas em um só lugar, com busca por período, cliente ou situação, facilitando o fechamento mensal e a conferência com a contabilidade.
+O **EmiteJá** é um sistema web para revendas de motos que une o controle de estoque e de vendas à emissão do documento fiscal da venda. Ao confirmar a venda de uma moto, o sistema gera o documento automaticamente, envia a um autorizador por um contrato de integração, acompanha os estados de processamento e impede que a mesma venda gere dois documentos. A autorização é **simulada**: não há emissão fiscal real nem acesso a serviços governamentais. O cálculo de imposto usa uma política variável e explicitamente didática (alíquota única ou por cilindrada).
 
-O projeto é desenvolvido para a disciplina de Análise e Projeto de Sistemas e cobre a especificação (visão e requisitos), a modelagem com casos de uso e diagramas UML e um protótipo funcional. O cliente considerado é fictício: uma pequena loja de materiais elétricos com emissão diária de notas.
+O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
 ## Documentação (Etapa 05)
 
@@ -18,8 +18,8 @@ O projeto é desenvolvido para a disciplina de Análise e Projeto de Sistemas e 
 
 ## Identificação da Equipe
 
-- **Equipe:** Grupo04
-- **Projeto:** Automação de Emissão de Nota Fiscal (EmiteJá)
+- **Equipe:** Grupo 04
+- **Projeto:** Automação de Emissão de Nota Fiscal e Gestão de Venda de Motos (EmiteJá)
 - **Repositório:** https://github.com/Abraaog/AutomacaoNotaFiscal
 - **Branch principal:** `main`
 
