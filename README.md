@@ -11,9 +11,11 @@ O **EmiteJá** é um sistema web para revendas de motos que une o controle de es
 
 O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
-## Documentação (Etapa 05)
+## Documentação
 
-- [Documento de Requisitos (completo)](docs/documento-de-requisitos.md)
+- [Roteiro de Entrevista (Etapa 01)](docs/roteiro-de-entrevista.md)
+- [Backlog do Produto (Etapa 02)](docs/backlog-do-produto.md)
+- [Documento de Requisitos (Etapa 05)](docs/documento-de-requisitos.md)
 - [Documento de Requisitos (.docx para entrega)](docs/DocumentoDeRequisitosEmiteJa.docx)
 
 ## Identificação da Equipe
