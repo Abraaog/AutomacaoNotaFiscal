@@ -15,6 +15,7 @@ O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
 - [Roteiro de Entrevista (Etapa 01)](docs/roteiro-de-entrevista.md)
 - [Backlog do Produto (Etapa 02)](docs/backlog-do-produto.md)
+- [Projeto Preliminar (apresentação parcial)](docs/projeto-preliminar.md)
 - [Documento de Requisitos (Etapa 05)](docs/documento-de-requisitos.md)
 - [Documento de Requisitos (.docx para entrega)](docs/DocumentoDeRequisitosEmiteJa.docx)
 
