@@ -6,6 +6,8 @@ import { criarServicos, criarApp } from './app.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PORTA = Number(process.env.PORT) || 3000;
+// Local: só a própria máquina. Em hospedagem (Render, Railway), defina HOST=0.0.0.0.
+const HOST = process.env.HOST || '127.0.0.1';
 const SENHA_DEMO = process.env.SENHA_DEMO || 'emiteja';
 const INTERVALO_REENVIO_MS = Number(process.env.REENVIO_MS) || 60000;
 const VERIFICACAO_PENDENTES_MS = 5000;
@@ -23,6 +25,6 @@ setInterval(() => {
   servicos.emissao.reenviarPendentes().catch((erro) => console.error('[reenvio]', erro));
 }, VERIFICACAO_PENDENTES_MS);
 
-app.listen(PORTA, '127.0.0.1', () => {
+app.listen(PORTA, HOST, () => {
   process.stdout.write('EmiteJá no ar em http://localhost:' + PORTA + '\n');
 });
