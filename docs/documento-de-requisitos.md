@@ -1,7 +1,7 @@
 # Documento de Requisitos
 
 **Projeto EmiteJá: Automação de Emissão de Nota Fiscal e Gestão de Venda de Motos**
-Revisão 2.0
+Revisão 2.1
 
 | Elaboração | Elaboração | Elaboração | Aprovação |
 |---|---|---|---|
@@ -15,6 +15,7 @@ Revisão 2.0
 |---|---|---|---|
 | 1.0 | Abraão, Ednaldo, Kayk | 05/11/2026 | Elaboração inicial do Documento de Requisitos do EmiteJá. |
 | 2.0 | Abraão, Ednaldo, Kayk | 05/11/2026 | Adequação ao tema do Grupo 04: inclusão da gestão de venda de motos, emissão simulada, contrato de integração, estados de processamento, prevenção de emissão duplicada e política didática de cálculo de imposto. |
+| 2.1 | Abraão | 11/11/2026 | Seção 8: protótipo publicado (tecnologias, telas, testes automatizados e dados de demonstração). |
 
 ## 1. Introdução
 
@@ -439,4 +440,34 @@ A comunicação com o Autorizador Simulado usa requisições e respostas em JSON
 
 ## 8. Protótipo do Sistema
 
-O protótipo de telas e a implementação parcial da emissão simulada, com testes das duas variantes da política e dos três cenários do simulador, estão em desenvolvimento nas issues #6 (telas) e #7 (código e testes) e serão referenciados aqui quando publicados.
+O protótipo está no repositório do projeto: telas na pasta `public/` (issue #6) e código da emissão simulada com testes em `src/` e `testes/` (issue #7). As instruções para executar estão no README.
+
+### 8.1 Tecnologias
+
+Node.js 22 ou superior, Express 5 e banco SQLite embutido (`node:sqlite`), sem serviços externos. As telas usam HTML, CSS e JavaScript sem framework. O código segue a arquitetura do projeto preliminar: domínio (`src/dominio`), aplicação (`src/aplicacao`), infraestrutura (`src/infra`) e interface (`public/`). O autorizador simulado implementa o contrato da seção 7.2.
+
+### 8.2 Telas
+
+| Tela | Perfis | Requisitos atendidos |
+|---|---|---|
+| Entrada | Todos | US01 |
+| Nova venda | Vendedor, Gerente | US03, US05, US06; RN03 (moto reservada na confirmação); prévia do imposto pela política ativa |
+| Documentos | Todos | US07; filtro por estado de processamento (seção 7.1) |
+| Documento (cupom) | Todos; ações por perfil | US07, US08, US09, US12; RN01 e RN02 (pedir de novo não duplica); RN07 (reenvio); RN08 e RN09 (cancelamento); histórico de transições |
+| Clientes | Vendedor, Gerente | US04; validação de CPF e CNPJ (RN05) |
+| Estoque | Vendedor, Gerente; cadastro só Gerente | US02, US03; validação de chassi (RN04) |
+| Painel do mês | Gerente, Contador | US13, US14 |
+| Configurações | Gerente | US10, US11 |
+
+Todas as telas mostram a faixa "SIMULAÇÃO · sem valor fiscal" com a política ativa e o cenário do autorizador, e o documento traz o selo "SEM VALOR FISCAL".
+
+### 8.3 Testes automatizados
+
+São 24 testes (`npm test`), todos aprovados:
+
+- **Domínio:** chassi (RN04), CPF e CNPJ (RN05), variantes A e B da política, incluindo o exemplo de 300 cc por R$ 25.000,00, máquina de estados (seção 7.1) e regras de cancelamento (RN08).
+- **Emissão:** venda autorizada, pedido repetido sem novo envio (RN01, RN02), moto em duas vendas (RN03), política registrada no documento (RN06), os três cenários do simulador (sucesso, rejeição e indisponível com três reenvios automáticos, RN07) e cancelamento com devolução da moto ao estoque (RN09).
+
+### 8.4 Dados de demonstração
+
+Ao iniciar com o banco vazio, o sistema cria cinco usuários, doze motos, quatro clientes e três vendas, com documentos em estados diferentes. Os dados são fictícios.
