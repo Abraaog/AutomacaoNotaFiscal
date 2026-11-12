@@ -2,10 +2,14 @@
 import { api } from './api.js';
 import { esc, reais, percentual, chassi, documento, estado, NOME_POLITICA } from './formato.js';
 
-const SENHA_DEMO = 'emiteja';
-const LOGINS_DEMO = [
-  ['marcos', 'Vendedor'], ['paula', 'Vendedor'], ['diego', 'Vendedor'], ['sandra', 'Gerente'], ['fabio', 'Contador'],
+const USUARIOS_DEMO = [
+  { login: 'sandra', nome: 'Sandra Lima', perfil: 'Gerente' },
+  { login: 'marcos', nome: 'Marcos Andrade', perfil: 'Vendedor' },
+  { login: 'paula', nome: 'Paula Rocha', perfil: 'Vendedor' },
+  { login: 'diego', nome: 'Diego Souza', perfil: 'Vendedor' },
+  { login: 'fabio', nome: 'Fábio Teles', perfil: 'Contador' },
 ];
+export const LOGIN_PADRAO = 'sandra';
 const ATRASO_BUSCA_MS = 250;
 // Faixas da Variante B, reaproveitadas como filtro de cilindrada no balcão.
 const FAIXAS_CILINDRADA = [
@@ -45,46 +49,37 @@ function cabeca(titulo, subtitulo, extra) {
 
 /* Entrada */
 
+// Protótipo de demonstração: entra direto como um dos usuários, sem senha.
 export function telaEntrada(raiz, aoEntrar) {
-  const linhas = LOGINS_DEMO.map(function (par) {
-    return '<tr><td><button type="button" data-login="' + par[0] + '">' + par[0] + '</button></td><td>' + par[1] + '</td></tr>';
+  const opcoes = USUARIOS_DEMO.map(function (u) {
+    return '<li><button type="button" class="usuario-demo" data-login="' + u.login + '">' +
+      '<strong>' + u.nome + '</strong><span>' + u.perfil + '</span></button></li>';
   }).join('');
   raiz.innerHTML =
-    '<main class="entrada"><form id="f-entrada" novalidate>' +
+    '<main class="entrada"><div class="entrada-caixa">' +
       '<div class="marca"><strong>EmiteJá</strong><span>Rota Motos · emissão simulada</span></div>' +
-      '<div class="campo"><label for="login">Usuário</label><input id="login" name="login" autocomplete="username" required></div>' +
-      '<div class="campo"><label for="senha">Senha</label><input id="senha" name="senha" type="password" autocomplete="current-password" required></div>' +
-      '<button class="btn btn-primario" type="submit" style="width:100%">Entrar</button>' +
+      '<p class="entrada-instrucao">Entrar como</p>' +
+      '<ul class="usuarios-demo">' + opcoes + '</ul>' +
       '<p class="erro-form" id="erro-entrada" role="alert"></p>' +
-      '<div class="demo">Contas de demonstração, senha <code>' + SENHA_DEMO + '</code>' +
-        '<table><tbody>' + linhas + '</tbody></table></div>' +
-    '</form></main>';
+    '</div></main>';
 
-  const form = raiz.querySelector('#f-entrada');
   const erro = raiz.querySelector('#erro-entrada');
-  form.querySelectorAll('[data-login]').forEach(function (b) {
+  raiz.querySelectorAll('[data-login]').forEach(function (b) {
     b.addEventListener('click', function () {
-      form.login.value = b.dataset.login;
-      form.senha.value = SENHA_DEMO;
-      form.querySelector('[type=submit]').focus();
+      enviando(b, async function () {
+        try {
+          aoEntrar(await entrarComo(b.dataset.login));
+        } catch (e) {
+          erro.textContent = e.message;
+        }
+      });
     });
   });
-  form.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    const dados = lerFormulario(form);
-    if (!dados.login || !dados.senha) {
-      erro.textContent = 'Informe usuário e senha.';
-      return;
-    }
-    enviando(form.querySelector('[type=submit]'), async function () {
-      try {
-        aoEntrar(await api('/sessao', { metodo: 'POST', corpo: dados }));
-      } catch (e) {
-        erro.textContent = e.message;
-      }
-    });
-  });
-  form.login.focus();
+  raiz.querySelector('[data-login]').focus();
+}
+
+export function entrarComo(login) {
+  return api('/sessao', { metodo: 'POST', corpo: { login: login } });
 }
 
 /* Cliente: formulário compartilhado entre balcão e cadastro */

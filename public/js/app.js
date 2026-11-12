@@ -1,7 +1,7 @@
 // Entrada do protótipo: sessão, quadro (menu + faixa do simulador), rotas por hash e avisos.
 import { api, ErroApi } from './api.js';
 import { esc, NOME_POLITICA, NOME_CENARIO } from './formato.js';
-import { telaEntrada, telaVenda, telaEstoque, telaClientes } from './telas.js';
+import { telaEntrada, telaVenda, telaEstoque, telaClientes, entrarComo, LOGIN_PADRAO } from './telas.js';
 import { telaDocumentos, telaDocumento } from './documentos.js';
 import { telaPainel, telaConfiguracao } from './gestao.js';
 
@@ -20,6 +20,7 @@ const AVISO_MS = 4200;
 const raiz = document.getElementById('raiz');
 const caixaAviso = document.getElementById('aviso');
 let usuario = null;
+let reentrando = false;
 let limparTela = null;
 let geracao = 0;
 let temporizadorAviso = 0;
@@ -59,7 +60,7 @@ function montarQuadro() {
         '<div class="marca"><strong>EmiteJá</strong><span>Rota Motos</span></div>' +
         '<ul class="menu">' + itens + '</ul>' +
         '<div class="quem"><b>' + esc(usuario.nome) + '</b><span class="discreto">' + esc(usuario.perfil) + '</span>' +
-          '<div><button type="button" class="btn btn-leve" id="sair">Sair</button></div></div>' +
+          '<div><button type="button" class="btn btn-leve" id="sair">Trocar usuário</button></div></div>' +
       '</nav>' +
       '<div class="principal">' +
         '<div class="faixa-sim" id="faixa" aria-label="Situação do simulador"></div>' +
@@ -148,10 +149,18 @@ async function sair() {
 }
 
 window.addEventListener('hashchange', navegar);
-window.addEventListener('sessao-expirada', function () {
-  if (!usuario) return;
-  usuario = null;
-  avisar('Sessão expirada. Entre de novo.', 'erro');
+// Se o servidor perder a sessão, entra de novo como o mesmo usuário, sem interromper a demonstração.
+window.addEventListener('sessao-expirada', async function () {
+  if (!usuario || reentrando) return;
+  reentrando = true;
+  try {
+    usuario = await entrarComo(usuario.login);
+  } catch (erro) {
+    usuario = null;
+    avisar('Não foi possível continuar a sessão. Escolha o usuário de novo.', 'erro');
+  } finally {
+    reentrando = false;
+  }
   navegar();
 });
 
@@ -160,6 +169,14 @@ async function iniciar() {
     usuario = await api('/sessao');
   } catch (erro) {
     usuario = null;
+  }
+  // Sem sessão: abre direto como a gerente (acesso a todas as telas); "Trocar usuário" escolhe outro.
+  if (!usuario) {
+    try {
+      usuario = await entrarComo(LOGIN_PADRAO);
+    } catch (erro) {
+      usuario = null;
+    }
   }
   navegar();
 }
