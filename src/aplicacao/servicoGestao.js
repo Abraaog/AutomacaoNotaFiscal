@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import { ErroNegocio } from '../dominio/erros.js';
 import { POLITICAS, obterPolitica, calcularImposto } from '../dominio/politicas.js';
 import { CENARIOS } from '../infra/autorizadorSimulado.js';
@@ -17,18 +16,21 @@ export function intervaloDoMes(mes) {
 }
 
 export function criarServicoGestao({ repos, relogio = () => new Date() }) {
-  const sessoes = new Map();
-
+  // Sessão sem estado: o cookie guarda o login. Em hospedagem serverless cada requisição pode cair
+  // numa instância diferente, e uma sessão guardada em memória "expirava" sozinha.
+  // Protótipo de demonstração: a senha é opcional (entrada direta por usuário); se vier, é conferida.
   function entrar(login, senha) {
     const usuario = repos.usuarios.porLogin(String(login ?? '').trim().toLowerCase());
-    if (!usuario || !conferirSenha(senha, usuario.senha_hash)) throw new ErroNegocio('Usuário ou senha incorretos.', 401);
-    const token = randomBytes(24).toString('hex');
-    sessoes.set(token, usuario.id);
-    return { token, usuario: repos.usuarios.porId(usuario.id) };
+    if (!usuario) throw new ErroNegocio('Usuário não encontrado.', 401);
+    if (senha !== undefined && !conferirSenha(senha, usuario.senha_hash)) throw new ErroNegocio('Usuário ou senha incorretos.', 401);
+    return { token: usuario.login, usuario: repos.usuarios.porId(usuario.id) };
   }
 
-  const sair = (token) => sessoes.delete(token);
-  const usuarioDaSessao = (token) => (sessoes.has(token) ? repos.usuarios.porId(sessoes.get(token)) : null);
+  const sair = () => {};
+  function usuarioDaSessao(token) {
+    const usuario = token ? repos.usuarios.porLogin(token) : null;
+    return usuario ? repos.usuarios.porId(usuario.id) : null;
+  }
 
   function configuracao() {
     const atual = repos.configuracao.obter();

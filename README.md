@@ -18,14 +18,14 @@ Requisito: [Node.js](https://nodejs.org) 22.13 ou superior (usa o SQLite embutid
 ```bash
 npm install
 npm start      # abre em http://localhost:3000
-npm test       # 24 testes automatizados (domínio e emissão)
+npm test       # 25 testes automatizados (domínio, emissão e API)
 ```
 
 Na primeira execução o sistema cria o banco em `dados/emiteja.db` com motos, clientes e três vendas de exemplo. Para recomeçar do zero, apague a pasta `dados/`.
 
 ### Contas de demonstração
 
-A senha de todas é `emiteja`. A tela de entrada também lista as contas: basta clicar no nome.
+Não é preciso senha: o sistema abre direto como `sandra` (Gerente), e o botão **Trocar usuário** lista as outras contas para entrar com um clique. A sessão fica num cookie com o usuário escolhido, por isso continua valendo mesmo em hospedagem serverless (Vercel).
 
 | Usuário | Perfil | O que pode fazer |
 |---|---|---|
@@ -35,12 +35,12 @@ A senha de todas é `emiteja`. A tela de entrada também lista as contas: basta 
 
 ### Roteiro sugerido para a apresentação
 
-1. Entre como `sandra`, faça uma venda em **Nova venda** e veja o documento passar de Processando para Autorizado.
+1. Como `sandra` (a conta que já abre), faça uma venda em **Nova venda** e veja o documento passar de Processando para Autorizado.
 2. No documento, clique em **Pedir emissão de novo**: a mesma venda não gera um segundo documento (RN01).
 3. Em **Configurações**, troque o autorizador para **Rejeição** ou **Indisponível** e faça outra venda para ver os estados Rejeitado e Pendente (com reenvio automático).
 4. Troque a política para a **Variante B** e compare o imposto de motos de cilindradas diferentes.
 5. Cancele um documento autorizado (justificativa com 15 caracteres ou mais) e confira a moto de volta ao estoque.
-6. Entre como `fabio` e exporte o mês em **Painel do mês**.
+6. Em **Trocar usuário**, entre como `fabio` e exporte o mês em **Painel do mês**.
 
 ### Variáveis de ambiente (opcionais)
 

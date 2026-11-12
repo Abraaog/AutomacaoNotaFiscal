@@ -10,6 +10,7 @@ import { criarServicoGestao } from './aplicacao/servicoGestao.js';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const COOKIE = 'emiteja_sessao';
+const DURACAO_COOKIE_MS = 30 * 24 * 60 * 60 * 1000;
 
 const lerCookie = (req) => {
   const par = (req.headers.cookie ?? '').split(';').map((c) => c.trim()).find((c) => c.startsWith(`${COOKIE}=`));
@@ -47,7 +48,7 @@ function rotasApi(s) {
 
   api.post('/sessao', (req, res) => {
     const { token, usuario } = s.gestao.entrar(req.body.login, req.body.senha);
-    res.cookie(COOKIE, token, { httpOnly: true, sameSite: 'strict', path: '/' }).json(usuario);
+    res.cookie(COOKIE, token, { httpOnly: true, sameSite: 'strict', path: '/', maxAge: DURACAO_COOKIE_MS }).json(usuario);
   });
   api.get('/sessao', exigir(), (req, res) => res.json(req.usuario));
   api.delete('/sessao', (req, res) => {

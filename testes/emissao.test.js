@@ -154,4 +154,27 @@ describe('API e perfis', () => {
       servidor.close();
     }
   });
+
+  test('entra sem senha e a sessão vale em outra instância do servidor', async () => {
+    const a = criarApp(montar().s).listen(0);
+    const b = criarApp(montar().s).listen(0);
+    const api = (srv) => `http://127.0.0.1:${srv.address().port}/api`;
+    try {
+      const entrada = await fetch(`${api(a)}/sessao`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ login: 'contador' }),
+      });
+      assert.equal(entrada.status, 200);
+      const cookie = entrada.headers.get('set-cookie').split(';')[0];
+      const sessao = await fetch(`${api(b)}/sessao`, { headers: { cookie } });
+      assert.equal(sessao.status, 200);
+      assert.equal((await sessao.json()).perfil, 'Contador');
+      const inexistente = await fetch(`${api(a)}/sessao`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ login: 'ninguem' }),
+      });
+      assert.equal(inexistente.status, 401);
+    } finally {
+      a.close();
+      b.close();
+    }
+  });
 });
