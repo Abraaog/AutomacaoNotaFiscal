@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmiteJá · Projeto Preliminar · Grupo 04</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f7a4d'/%3E%3Cpath d='M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z' fill='%23fff'/%3E%3Cpath d='M24.5 42.5l5 5 10-11' fill='none' stroke='%231f7a4d' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Sistema da skill construtor-apresentacoes com a paleta do EmiteJá ("nota fiscal verde"). */
+    :root {
+      --bg: #0e2b20;
+      --bg-soft: #123d2c;
+      --surface: rgba(255,255,255,0.045);
+      --surface-2: rgba(255,255,255,0.075);
+      --text: #f1f7f3;
+      --text-soft: #a8c3b4;
+      --text-faint: #6f8f7e;
+      --line: rgba(255,255,255,0.10);
+
+      --accent: #6fd3a0;
+      --accent-2: #1f7a4d;
+      --accent-3: #bfe3cf;
+
+      --e-autorizado: #6fd3a0;
+      --e-processando: #86b4f0;
+      --e-pendente: #f0c46a;
+      --e-rejeitado: #ff8f86;
+      --e-rascunho: #a8b8af;
+
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
+      --shadow-glow: 0 0 0 1px rgba(111,211,160,0.22), 0 0 36px rgba(111,211,160,0.10);
+
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+
+      --fs-display: clamp(44px, min(6.4vw, 10.5vh), 92px);
+      --fs-h2: clamp(28px, min(3.4vw, 6.2vh), 48px);
+      --fs-h3: clamp(19px, 1.75vw, 25px);
+      --fs-body-lg: clamp(18px, 1.45vw, 23px);
+      --fs-body: clamp(15px, 1.15vw, 18px);
+      --fs-small: 14px;
+      --fs-mono: 13px;
+
+      --container-pad-y: 56px;
+      --container-pad-x: 72px;
+      --content-max: 1280px;
+
+      --anim-duration: 0.7s;
+      --anim-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(111,211,160,0.10), transparent 32%),
+        radial-gradient(circle at 85% 75%, rgba(31,122,77,0.22), transparent 34%),
+        linear-gradient(180deg, #10301f 0%, #0b2219 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: "IBM Plex Sans", sans-serif;
+      font-variant-numeric: tabular-nums;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3, p, blockquote, ul, ol { margin: 0; }
+
+    .slide {
+      position: relative;
+      height: 100vh;
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* Grade fina de formulário (DANFE) no lugar da grade do template */
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 95%);
+      opacity: 0.45;
+      z-index: 0;
+    }
+
+    .slide-inner {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      width: min(100%, calc(var(--content-max) + (var(--container-pad-x) * 2)));
+      margin: 0 auto;
+      padding: var(--container-pad-y) var(--container-pad-x);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(20px, 3.2vh, 34px);
+    }
+
+    .slide-counter {
+      position: absolute;
+      top: 28px;
+      right: 36px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: var(--fs-mono);
+      letter-spacing: 0.12em;
+      color: var(--text-faint);
+      z-index: 3;
+    }
+
+    .slide-brand {
+      position: absolute;
+      top: 22px;
+      left: 36px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-soft);
+      z-index: 3;
+    }
+    .slide-brand svg { width: 26px; height: 26px; }
+    .slide-brand em { font-style: normal; color: var(--accent); }
+
+    .mono { font-family: "IBM Plex Mono", monospace; }
+
+    .eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      font-size: var(--fs-body-lg);
+      line-height: 1.45;
+      color: var(--text-soft);
+    }
+
+    h1 {
+      font-size: var(--fs-display);
+      font-weight: 700;
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      max-width: 13ch;
+      text-wrap: balance;
+    }
+
+    h2 {
+      font-size: var(--fs-h2);
+      font-weight: 600;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      max-width: 22ch;
+      text-wrap: balance;
+    }
+
+    h3 {
+      font-size: var(--fs-h3);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+
+    p, li {
+      font-size: var(--fs-body);
+      line-height: 1.45;
+      color: var(--text-soft);
+      text-wrap: pretty;
+    }
+
+    .accent-text { color: var(--accent); }
+
+    .section-heading { display: flex; flex-direction: column; gap: 10px; max-width: 900px; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(111,211,160,0.25);
+      background: rgba(111,211,160,0.08);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12.5px;
+      color: var(--accent-3);
+      white-space: nowrap;
+    }
+
+    /* Título */
+    .hero { display: flex; flex-direction: column; gap: 22px; max-width: 1000px; }
+    .hero-logo { display: flex; align-items: center; gap: 18px; }
+    .hero-logo svg { width: clamp(64px, 7vw, 96px); height: clamp(64px, 7vw, 96px); filter: drop-shadow(0 10px 30px rgba(31,122,77,0.45)); }
+    .hero-logo .marca { font-size: clamp(32px, 3.4vw, 46px); font-weight: 700; letter-spacing: -0.03em; }
+    .hero-logo .marca em { font-style: normal; color: var(--accent); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 10px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .hero-meta div { display: flex; flex-direction: column; gap: 4px; }
+    .hero-meta span { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--text-faint); }
+    .hero-meta b { font-weight: 500; font-size: 16px; color: var(--text); }
+
+    /* Cards */
+    .card-grid { display: grid; gap: 18px; }
+    .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: clamp(18px, 2.4vh, 26px) 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card.destaque { border-color: rgba(111,211,160,0.32); box-shadow: var(--shadow-glow); }
+    .card-label { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-mono); color: var(--accent); }
+    .card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; }
+
+    .roteiro .card { min-height: 26vh; justify-content: space-between; }
+    .roteiro .card-label { font-size: clamp(34px, 3.4vw, 52px); font-weight: 500; color: var(--accent); letter-spacing: -0.03em; }
+
+    /* Problema / solução */
+    .comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .comparison-col {
+      border-radius: var(--radius-lg);
+      padding: 28px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+    }
+    .comparison-col.accent { background: linear-gradient(180deg, rgba(111,211,160,0.10), rgba(111,211,160,0.03)); border-color: rgba(111,211,160,0.32); box-shadow: var(--shadow-glow); }
+    .comparison-col ul { list-style: none; padding: 0; display: grid; gap: 12px; }
+    .comparison-col li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; color: var(--text); }
+    .comparison-col li::before { content: ""; width: 10px; height: 10px; margin-top: 0.5em; border-radius: 50%; background: var(--e-rejeitado); opacity: 0.85; }
+    .comparison-col.accent li::before { background: var(--accent); }
+    .comparison-col.muted li { color: var(--text-soft); }
+
+    /* Declaração */
+    .statement-wrap { display: flex; flex-direction: column; gap: 22px; max-width: 1100px; }
+    .statement { font-size: clamp(40px, 5.2vw, 78px); font-weight: 600; line-height: 1.04; letter-spacing: -0.035em; color: var(--text); text-wrap: balance; }
+    .quote-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Fluxo de estados */
+    .fluxo { display: grid; grid-template-columns: 1fr 64px minmax(260px, 0.75fr); align-items: center; }
+    .cadeia { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; align-items: center; }
+    .no {
+      padding: 20px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 150px;
+    }
+    .no p { font-size: 15px; }
+    .seta { height: 2px; background: linear-gradient(90deg, rgba(111,211,160,0.15), rgba(111,211,160,0.7)); position: relative; }
+    .seta::after { content: ""; position: absolute; right: -2px; top: -5px; border: 6px solid transparent; border-left: 9px solid rgba(111,211,160,0.8); border-right: none; }
+    .garfo { width: 64px; height: 300px; }
+    .saidas { display: grid; gap: 14px; }
+    .saida { padding: 14px 18px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-left: 4px solid currentColor; display: grid; gap: 2px; }
+    .saida b { font-size: 18px; }
+    .saida span { font-size: 14.5px; color: var(--text-soft); }
+    .estado-dot { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+    .estado-dot::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+    .s-autorizado { color: var(--e-autorizado); }
+    .s-processando { color: var(--e-processando); }
+    .s-pendente { color: var(--e-pendente); }
+    .s-rejeitado { color: var(--e-rejeitado); }
+    .s-rascunho { color: var(--e-rascunho); }
+
+    /* Diagramas de classes (SVG) */
+    .uml { width: 100%; height: auto; max-height: 58vh; display: block; }
+    .uml .caixa { fill: #133a2a; stroke: rgba(255,255,255,0.16); stroke-width: 1.5; }
+    .uml .caixa.interface { fill: #123224; stroke: rgba(111,211,160,0.55); stroke-dasharray: 7 5; }
+    .uml .caixa.principal { stroke: rgba(111,211,160,0.6); stroke-width: 2; }
+    .uml .cabeca { fill: #1f7a4d; }
+    .uml .nome { fill: #ffffff; font: 600 21px "IBM Plex Sans", sans-serif; }
+    .uml .estereotipo { fill: var(--accent); font: 500 14px "IBM Plex Mono", monospace; }
+    .uml .attr { fill: #cfe1d6; font: 400 16px "IBM Plex Mono", monospace; }
+    .uml .metodo { fill: var(--accent); font: 500 16px "IBM Plex Mono", monospace; }
+    .uml .rotulo { fill: var(--text-soft); font: 500 15px "IBM Plex Sans", sans-serif; }
+    .uml .mult { fill: var(--accent-3); font: 500 14px "IBM Plex Mono", monospace; }
+    .uml .linha { stroke: rgba(191,227,207,0.75); stroke-width: 2; fill: none; }
+    .uml .linha.tracejada { stroke-dasharray: 8 6; }
+    .uml .linha.realiza { stroke: #6fd3a0; }
+    .legenda-uml { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--text-faint); }
+    .legenda-uml b { color: var(--text-soft); font-weight: 500; }
+
+    /* Arquitetura em camadas */
+    .camadas { display: grid; gap: 10px; }
+    .camada {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 24px;
+      align-items: center;
+      padding: clamp(12px, 1.8vh, 18px) 22px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.09);
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015));
+      position: relative;
+    }
+    .camada.dominio { border-color: rgba(111,211,160,0.35); box-shadow: var(--shadow-glow); background: linear-gradient(90deg, rgba(111,211,160,0.12), rgba(111,211,160,0.02)); }
+    .camada h3 { font-size: clamp(18px, 1.6vw, 22px); }
+    .camada .papel { font-size: 14px; color: var(--text-soft); margin-top: 3px; }
+    .camada .pecas { display: flex; flex-wrap: wrap; gap: 8px; }
+    .peca { padding: 7px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); font-family: "IBM Plex Mono", monospace; font-size: 14px; color: var(--text); }
+    .camada + .camada::before { content: ""; position: absolute; left: 124px; top: -11px; width: 2px; height: 10px; background: rgba(111,211,160,0.6); }
+    .nota-camadas { display: flex; gap: 22px; flex-wrap: wrap; font-size: 14.5px; color: var(--text-soft); }
+    .nota-camadas b { color: var(--accent); font-weight: 600; }
+
+    /* Etapas */
+    .steps-list { list-style: none; padding: 0; display: grid; }
+    .step { display: grid; grid-template-columns: 64px 1fr auto; gap: 18px; align-items: center; padding: clamp(10px, 1.7vh, 16px) 0; border-bottom: 1px solid var(--line); }
+    .step:first-child { border-top: 1px solid var(--line); }
+    .step-num { font-family: "IBM Plex Mono", monospace; color: var(--accent); font-size: clamp(18px, 1.7vw, 24px); font-weight: 500; }
+    .step-copy { display: flex; flex-direction: column; gap: 3px; }
+    .step-copy p { font-size: 15.5px; }
+
+    /* Estatísticas */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+    .stat-card {
+      padding: 26px 24px;
+      min-height: 30vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 8px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.09);
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+    }
+    .stat-card.destaque { border-color: rgba(111,211,160,0.32); box-shadow: var(--shadow-glow); }
+    .stat-value { font-size: clamp(64px, 7.5vw, 120px); font-weight: 600; line-height: 0.9; letter-spacing: -0.05em; color: var(--text); }
+    .stat-card.destaque .stat-value { color: var(--accent); }
+    .stat-label { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--accent); }
+
+    /* Justificativas */
+    .decisoes { display: grid; }
+    .decisao { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.9fr) minmax(0, 1.5fr) 150px; gap: 22px; align-items: center; padding: clamp(11px, 1.8vh, 17px) 4px; border-bottom: 1px solid var(--line); }
+    .decisao.cabecalho { padding-top: 0; padding-bottom: 8px; font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--text-faint); }
+    .decisao h3 { font-size: clamp(17px, 1.45vw, 21px); color: var(--text); }
+    .decisao .descartada { font-size: 15px; color: var(--text-faint); text-decoration: line-through; text-decoration-color: rgba(255,143,134,0.6); }
+    .decisao p { font-size: 15px; }
+    .decisao .tag { justify-self: end; }
+
+    /* Encerramento */
+    .closing-content { display: flex; flex-direction: column; gap: 20px; max-width: 980px; }
+    .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 0 22px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 16px;
+      font-weight: 600;
+      transition-property: transform, background-color, border-color;
+      transition-duration: 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #0b2219; box-shadow: var(--shadow-glow); }
+    .btn-secondary { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.16); color: var(--text); }
+    .url { font-family: "IBM Plex Mono", monospace; font-size: clamp(18px, 1.7vw, 24px); color: var(--accent-3); }
+
+    /* Animações (motor da skill) */
+    .animate {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity var(--anim-duration) var(--anim-ease), transform var(--anim-duration) var(--anim-ease);
+    }
+    .animate.in { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 90ms; }
+    .delay-2 { transition-delay: 180ms; }
+    .delay-3 { transition-delay: 270ms; }
+    .delay-4 { transition-delay: 360ms; }
+    .delay-5 { transition-delay: 450ms; }
+    .delay-6 { transition-delay: 540ms; }
+
+    .dot-nav { position: fixed; top: 50%; right: 18px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 9px; z-index: 100; }
+    .dot-nav button {
+      width: 10px; height: 10px; border-radius: 999px; border: none; padding: 0;
+      background: rgba(255,255,255,0.22);
+      cursor: pointer;
+      transition-property: transform, background-color, box-shadow;
+      transition-duration: 0.2s;
+    }
+    .dot-nav button.active { background: var(--accent); box-shadow: 0 0 0 5px rgba(111,211,160,0.14); transform: scale(1.15); }
+    .dot-nav button:hover { transform: scale(1.1); }
+    .dot-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .animate { opacity: 1; transform: none; transition: none; }
+    }
+
+    @media (max-height: 700px) {
+      .slide-brand { display: none; }
+    }
+
+    @media (max-height: 760px) {
+      :root { --container-pad-y: 48px; }
+      .no { min-height: 130px; }
+      .stat-card { min-height: 26vh; }
+    }
+
+    @media (max-width: 1100px) {
+      :root { --container-pad-x: 40px; }
+      .cols-4, .cols-5, .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cols-3, .comparison-grid { grid-template-columns: 1fr; }
+      .camada { grid-template-columns: 1fr; gap: 10px; }
+      .camada + .camada::before { display: none; }
+      .decisao { grid-template-columns: 1fr; gap: 4px; }
+      .decisao .tag { justify-self: start; }
+      .decisao.cabecalho { display: none; }
+      .fluxo, .cadeia { grid-template-columns: 1fr; gap: 12px; }
+      .seta, .garfo { display: none; }
+      .slide, .slide-inner { height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="dot-nav" aria-label="Navegação entre slides"></nav>
+
+  <!-- Logo do EmiteJá e marcadores dos diagramas, reaproveitados nos slides -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="14" fill="#1f7a4d"/>
+      <path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#ffffff"/>
+      <path d="M38 12v7a2 2 0 0 0 2 2h7z" fill="#bfe3cf"/>
+      <rect x="22" y="22" width="11" height="3" rx="1.5" fill="#9fb8aa"/>
+      <rect x="22" y="29" width="20" height="3" rx="1.5" fill="#9fb8aa"/>
+      <path d="M24.5 42.5l5 5 10-11" fill="none" stroke="#1f7a4d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <defs>
+      <marker id="seta-cheia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 Z" fill="#bfe3cf"/>
+      </marker>
+      <marker id="realiza" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="13" markerHeight="13" orient="auto-start-reverse">
+        <path d="M0 0 L12 6 L0 12 Z" fill="#0e2b20" stroke="#6fd3a0" stroke-width="1.5"/>
+      </marker>
+      <marker id="composicao" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="16" markerHeight="10" orient="auto">
+        <path d="M0 5 L8 0 L16 5 L8 10 Z" fill="#bfe3cf"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <main class="presentation">
+
+    <!-- 01 · Título -->
+    <section class="slide title-slide">
+      <div class="slide-inner">
+        <div class="slide-counter">01 / 16</div>
+        <div class="hero">
+          <div class="hero-logo animate delay-1">
+            <svg role="img" aria-label="Logo do EmiteJá"><use href="#logo"/></svg>
+            <span class="marca">Emite<em>Já</em></span>
+          </div>
+          <div class="eyebrow animate delay-2">Projeto preliminar · Análise e Projeto de Sistemas</div>
+          <h1 class="animate delay-3">Vender a moto e <span class="accent-text">emitir a nota</span> no mesmo passo</h1>
+          <p class="subtitle animate delay-4">Gestão de vendas da Rota Motos com emissão simulada do documento fiscal, sem duplicidade.</p>
+          <div class="hero-meta animate delay-5">
+            <div><span>Equipe · Grupo 04</span><b>Abraão Gomes · Ednaldo Guilherme · Kayk Thierry</b></div>
+            <div><span>Instituição</span><b>UFPB · CCAE · DCX</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Roteiro -->
+    <section class="slide grid-slide roteiro">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">02 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">Roteiro</div>
+          <h2 class="animate delay-2">Cinco partes, do problema às decisões</h2>
+        </div>
+        <div class="card-grid cols-5">
+          <article class="card animate delay-1"><div class="card-label">01</div><h3>Visão geral</h3><p>Problema da loja e proposta.</p></article>
+          <article class="card animate delay-2"><div class="card-label">02</div><h3>Funcionalidades</h3><p>Seis módulos e o fluxo principal.</p></article>
+          <article class="card animate delay-3"><div class="card-label">03</div><h3>Classes</h3><p>Domínio e pontos de variação.</p></article>
+          <article class="card animate delay-4"><div class="card-label">04</div><h3>Arquitetura</h3><p>Quatro camadas e a emissão.</p></article>
+          <article class="card destaque animate delay-5"><div class="card-label">05</div><h3>Justificativas</h3><p>Dez decisões e o que descartamos.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Visão geral: problema e solução -->
+    <section class="slide comparison-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">03 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">01 · Visão geral</div>
+          <h2 class="animate delay-2">Da planilha separada à <span class="accent-text">venda que emite</span></h2>
+        </div>
+        <div class="comparison-grid">
+          <div class="comparison-col muted animate delay-2">
+            <h3>Hoje na Rota Motos</h3>
+            <ul>
+              <li>Estoque controlado em planilha</li>
+              <li>Nota digitada em outro programa</li>
+              <li>Mesma moto vendida duas vezes</li>
+              <li>Notas repetidas e rejeições por digitação</li>
+              <li>Ninguém sabe a situação da nota</li>
+            </ul>
+          </div>
+          <div class="comparison-col accent animate delay-3">
+            <h3>Com o EmiteJá</h3>
+            <ul>
+              <li>Confirmar a venda gera o documento</li>
+              <li>Imposto calculado pela política ativa</li>
+              <li>Cada estado acompanhado na tela</li>
+              <li>Uma venda, um documento, sempre</li>
+              <li>Resultado da emissão atualiza o estoque</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Declaração -->
+    <section class="slide quote-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">04 / 16</div>
+        <div class="statement-wrap">
+          <div class="eyebrow animate delay-1">01 · Visão geral</div>
+          <blockquote class="statement animate delay-2">A venda é a origem do documento. <span class="accent-text">A mesma venda nunca gera dois.</span></blockquote>
+          <div class="quote-meta animate delay-3"><span class="tag">RN01</span><span class="tag">RN02</span><span class="tag">emissão simulada · sem valor fiscal</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Usuários -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">05 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">01 · Visão geral</div>
+          <h2 class="animate delay-2">Três perfis, cada um com seu limite</h2>
+        </div>
+        <div class="card-grid cols-3">
+          <article class="card animate delay-1">
+            <div class="card-label">Vendedor</div>
+            <h3>Vende e acompanha</h3>
+            <p>Registra a venda, cadastra clientes e reenvia documentos rejeitados.</p>
+            <div class="tags"><span class="tag">US03 · US05 · US09</span></div>
+          </article>
+          <article class="card destaque animate delay-2">
+            <div class="card-label">Gerente</div>
+            <h3>Mantém e configura</h3>
+            <p>Cadastra motos, cancela documentos e escolhe política e cenário do simulador.</p>
+            <div class="tags"><span class="tag">US02 · US10 · US11 · US12</span></div>
+          </article>
+          <article class="card animate delay-3">
+            <div class="card-label">Contador</div>
+            <h3>Consulta e exporta</h3>
+            <p>Somente leitura: painel do mês e exportação dos documentos.</p>
+            <div class="tags"><span class="tag">US13 · US14 · RN10</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Funcionalidades -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">06 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">02 · Funcionalidades</div>
+          <h2 class="animate delay-2">14 histórias agrupadas em <span class="accent-text">seis módulos</span></h2>
+        </div>
+        <div class="card-grid cols-3">
+          <article class="card animate delay-1"><div class="card-label">Acesso</div><p>Login e bloqueio de funções por perfil.</p><div class="tags"><span class="tag">US01</span><span class="tag">RN10</span></div></article>
+          <article class="card animate delay-2"><div class="card-label">Estoque</div><p>Motos com filtros e situação: Disponível, Reservada, Vendida.</p><div class="tags"><span class="tag">US02 · US03</span><span class="tag">RN03 · RN04</span></div></article>
+          <article class="card animate delay-3"><div class="card-label">Clientes</div><p>Cadastro com CPF ou CNPJ validado e busca.</p><div class="tags"><span class="tag">US04</span><span class="tag">RN05</span></div></article>
+          <article class="card animate delay-1"><div class="card-label">Vendas</div><p>Registro e confirmação da venda, com reserva da moto.</p><div class="tags"><span class="tag">US05</span><span class="tag">RN03</span></div></article>
+          <article class="card destaque animate delay-2"><div class="card-label">Emissão</div><p>Documento automático, estados, reenvio, bloqueio de duplicidade e cancelamento.</p><div class="tags"><span class="tag">US06 a US09 · US12</span><span class="tag">RN01 · RN02 · RN06 a RN09</span></div></article>
+          <article class="card animate delay-3"><div class="card-label">Configuração e relatórios</div><p>Política de imposto, cenário do simulador, painel e exportação.</p><div class="tags"><span class="tag">US10 · US11 · US13 · US14</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Fluxo principal -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">07 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">02 · Funcionalidades</div>
+          <h2 class="animate delay-2">Fluxo principal: da venda ao estado final</h2>
+        </div>
+        <div class="fluxo">
+          <div class="cadeia">
+            <div class="no animate delay-1"><span class="tag">venda</span><h3>Venda confirmada</h3><p>Moto e cliente escolhidos; a moto fica Reservada.</p></div>
+            <div class="seta animate delay-2"></div>
+            <div class="no animate delay-2"><span class="estado-dot s-rascunho">Rascunho</span><h3>Documento criado</h3><p>Imposto calculado pela política ativa.</p></div>
+            <div class="seta animate delay-3"></div>
+            <div class="no animate delay-3"><span class="estado-dot s-processando">Processando</span><h3>Enviado ao autorizador</h3><p>Pelo contrato de integração simulado.</p></div>
+          </div>
+          <svg class="garfo animate delay-4" viewBox="0 0 64 300" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 150 C 30 150, 30 50, 62 50 M0 150 L62 150 M0 150 C 30 150, 30 250, 62 250" fill="none" stroke="rgba(111,211,160,0.6)" stroke-width="2"/>
+          </svg>
+          <div class="saidas">
+            <div class="saida s-autorizado animate delay-4"><b class="estado-dot">Autorizado</b><span>200 · moto passa a Vendida</span></div>
+            <div class="saida s-rejeitado animate delay-5"><b class="estado-dot">Rejeitado</b><span>422 · vendedor corrige e reenvia</span></div>
+            <div class="saida s-pendente animate delay-6"><b class="estado-dot">Pendente</b><span>503 · até 3 reenvios automáticos</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 · Classes: núcleo do domínio -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">08 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">03 · Classes</div>
+          <h2 class="animate delay-2">Núcleo do domínio: <span class="accent-text">a venda gera o documento</span></h2>
+        </div>
+        <svg class="uml animate delay-3" viewBox="0 0 1290 500" role="img" aria-label="Diagrama de classes: Usuario, Cliente e Moto ligados a Venda; Venda gera DocumentoFiscal; DocumentoFiscal compõe TransicaoEstado">
+          <path class="linha" d="M250 75 L300 75 L300 210 L348 210" marker-end="url(#seta-cheia)"/>
+          <path class="linha" d="M250 250 L348 250" marker-end="url(#seta-cheia)"/>
+          <path class="linha" d="M250 425 L300 425 L300 290 L348 290" marker-end="url(#seta-cheia)"/>
+          <path class="linha" d="M580 250 L668 250" marker-end="url(#seta-cheia)"/>
+          <path class="linha" d="M940 250 L1028 250" marker-start="url(#composicao)"/>
+          <text class="rotulo" x="258" y="64">registra</text>
+          <text class="mult" x="314" y="200">*</text>
+          <text class="rotulo" x="264" y="240">compra</text>
+          <text class="rotulo" x="258" y="414">vendida em</text>
+          <text class="mult" x="310" y="312">0..1</text>
+          <text class="rotulo" x="604" y="240">gera</text>
+          <text class="mult" x="626" y="272">0..1</text>
+          <text class="rotulo" x="952" y="240">histórico</text>
+          <text class="mult" x="1004" y="272">*</text>
+
+          <rect class="caixa" x="0" y="0" width="250" height="150" rx="12"/>
+          <path class="cabeca" d="M12 0 H238 a12 12 0 0 1 12 12 V42 H0 V12 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="18" y="29">Usuario</text>
+          <text class="attr" x="18" y="72">login</text>
+          <text class="attr" x="18" y="98">perfil: Perfil</text>
+          <text class="metodo" x="18" y="132">podeCancelar()</text>
+
+          <rect class="caixa" x="0" y="175" width="250" height="150" rx="12"/>
+          <path class="cabeca" d="M12 175 H238 a12 12 0 0 1 12 12 V217 H0 V187 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="18" y="204">Cliente</text>
+          <text class="attr" x="18" y="247">documento</text>
+          <text class="attr" x="18" y="273">nome</text>
+          <text class="metodo" x="18" y="307">validarDocumento()</text>
+
+          <rect class="caixa" x="0" y="350" width="250" height="150" rx="12"/>
+          <path class="cabeca" d="M12 350 H238 a12 12 0 0 1 12 12 V392 H0 V362 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="18" y="379">Moto</text>
+          <text class="attr" x="18" y="422">chassi · cilindrada</text>
+          <text class="attr" x="18" y="448">situacao</text>
+          <text class="metodo" x="18" y="482">reservar() · liberar()</text>
+
+          <rect class="caixa" x="350" y="160" width="230" height="180" rx="12"/>
+          <path class="cabeca" d="M362 160 H568 a12 12 0 0 1 12 12 V202 H350 V172 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="368" y="189">Venda</text>
+          <text class="attr" x="368" y="232">codigo «chave»</text>
+          <text class="attr" x="368" y="258">valor</text>
+          <text class="attr" x="368" y="284">situacao</text>
+          <text class="metodo" x="368" y="320">confirmar()</text>
+
+          <rect class="caixa principal" x="670" y="130" width="270" height="240" rx="12"/>
+          <path class="cabeca" d="M682 130 H928 a12 12 0 0 1 12 12 V172 H670 V142 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="688" y="159">DocumentoFiscal</text>
+          <text class="attr" x="688" y="202">estado</text>
+          <text class="attr" x="688" y="228">valorImposto</text>
+          <text class="attr" x="688" y="254">politicaAplicada</text>
+          <text class="attr" x="688" y="280">protocolo</text>
+          <text class="attr" x="688" y="306">tentativas</text>
+          <text class="metodo" x="688" y="346">mudarEstado()</text>
+
+          <rect class="caixa" x="1030" y="160" width="260" height="180" rx="12"/>
+          <path class="cabeca" d="M1042 160 H1278 a12 12 0 0 1 12 12 V202 H1030 V172 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="1048" y="189">TransicaoEstado</text>
+          <text class="attr" x="1048" y="232">estadoAnterior</text>
+          <text class="attr" x="1048" y="258">estadoNovo</text>
+          <text class="attr" x="1048" y="284">dataHora</text>
+          <text class="attr" x="1048" y="310">usuario: Usuario</text>
+        </svg>
+        <div class="legenda-uml animate delay-4">
+          <span><b>Enumerações:</b> Perfil · SituacaoMoto · SituacaoVenda · EstadoDocumento · Cenario</span>
+          <span><b>Regras:</b> RN01 · RN03 · RN04 · RN05 · RNF03</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 · Classes: pontos de variação -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">09 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">03 · Classes</div>
+          <h2 class="animate delay-2">Duas interfaces tornam o sistema <span class="accent-text">variável</span></h2>
+        </div>
+        <svg class="uml animate delay-3" viewBox="0 0 1290 470" role="img" aria-label="Diagrama: Configuracao define a PoliticaImposto ativa, implementada por AliquotaUnica e PorCilindrada; DocumentoFiscal usa a política e é enviado ao Autorizador, implementado por AutorizadorSimulado">
+          <path class="linha" d="M260 95 L398 95" marker-end="url(#seta-cheia)"/>
+          <path class="linha tracejada" d="M260 345 L330 345 L330 145 L398 145" marker-end="url(#seta-cheia)"/>
+          <path class="linha tracejada" d="M260 385 L398 385" marker-end="url(#seta-cheia)"/>
+          <path class="linha tracejada realiza" d="M820 55 L760 55 L760 100 L702 100" marker-end="url(#realiza)"/>
+          <path class="linha tracejada realiza" d="M820 185 L760 185 L760 130 L702 130" marker-end="url(#realiza)"/>
+          <path class="linha tracejada realiza" d="M820 385 L702 385" marker-end="url(#realiza)"/>
+          <text class="rotulo" x="276" y="84">define a ativa</text>
+          <text class="rotulo" x="342" y="250">usa no</text>
+          <text class="rotulo" x="342" y="270">cálculo</text>
+          <text class="rotulo" x="276" y="410">enviado a</text>
+
+          <rect class="caixa" x="0" y="30" width="260" height="140" rx="12"/>
+          <path class="cabeca" d="M12 30 H248 a12 12 0 0 1 12 12 V72 H0 V42 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="18" y="59">Configuracao</text>
+          <text class="attr" x="18" y="102">politicaAtiva</text>
+          <text class="attr" x="18" y="128">cenarioSimulador</text>
+          <text class="attr" x="18" y="154">alteradoEm</text>
+
+          <rect class="caixa" x="0" y="300" width="260" height="130" rx="12"/>
+          <path class="cabeca" d="M12 300 H248 a12 12 0 0 1 12 12 V342 H0 V312 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="18" y="329">DocumentoFiscal</text>
+          <text class="attr" x="18" y="372">estado</text>
+          <text class="attr" x="18" y="398">valorImposto</text>
+
+          <rect class="caixa interface" x="400" y="40" width="300" height="140" rx="12"/>
+          <text class="estereotipo" x="420" y="72">«interface»</text>
+          <text class="nome" x="420" y="100">PoliticaImposto</text>
+          <text class="metodo" x="420" y="140">nome()</text>
+          <text class="metodo" x="420" y="164">calcular(moto, valor)</text>
+
+          <rect class="caixa interface" x="400" y="310" width="300" height="140" rx="12"/>
+          <text class="estereotipo" x="420" y="342">«interface»</text>
+          <text class="nome" x="420" y="370">Autorizador</text>
+          <text class="metodo" x="420" y="410">autorizar(requisicao)</text>
+          <text class="metodo" x="420" y="434">cancelar(requisicao)</text>
+
+          <rect class="caixa" x="820" y="0" width="470" height="110" rx="12"/>
+          <path class="cabeca" d="M832 0 H1278 a12 12 0 0 1 12 12 V42 H820 V12 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="838" y="29">AliquotaUnica · variante A</text>
+          <text class="attr" x="838" y="80">10% sobre o valor da venda</text>
+
+          <rect class="caixa" x="820" y="130" width="470" height="110" rx="12"/>
+          <path class="cabeca" d="M832 130 H1278 a12 12 0 0 1 12 12 V172 H820 V142 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="838" y="159">PorCilindrada · variante B</text>
+          <text class="attr" x="838" y="210">8% · 12% · 18% por faixa de cc</text>
+
+          <rect class="caixa" x="820" y="310" width="470" height="140" rx="12"/>
+          <path class="cabeca" d="M832 310 H1278 a12 12 0 0 1 12 12 V352 H820 V322 a12 12 0 0 1 12 -12z"/>
+          <text class="nome" x="838" y="339">AutorizadorSimulado</text>
+          <text class="attr" x="838" y="384">cenário: sucesso · rejeição · indisponível</text>
+          <text class="attr" x="838" y="414">mesma venda, mesma resposta</text>
+        </svg>
+        <div class="legenda-uml animate delay-4">
+          <span><b>Padrão Strategy:</b> trocar a variante não altera a emissão</span>
+          <span><b>Regras:</b> RN02 · RN06 · RNF02 · US10 · US11</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Arquitetura -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">10 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">04 · Arquitetura preliminar</div>
+          <h2 class="animate delay-2">Monólito web em <span class="accent-text">quatro camadas</span></h2>
+        </div>
+        <div class="camadas">
+          <div class="camada animate delay-1">
+            <div><h3>Apresentação</h3><div class="papel">Telas no navegador</div></div>
+            <div class="pecas"><span class="peca">Estoque e clientes</span><span class="peca">Venda e documento</span><span class="peca">Configurações e painel</span></div>
+          </div>
+          <div class="camada animate delay-2">
+            <div><h3>Aplicação</h3><div class="papel">API REST · casos de uso e perfis</div></div>
+            <div class="pecas"><span class="peca">ServicoVenda</span><span class="peca">ServicoEmissao</span><span class="peca">ServicoCancelamento</span><span class="peca">ServicoConfiguracao</span></div>
+          </div>
+          <div class="camada dominio animate delay-3">
+            <div><h3>Domínio</h3><div class="papel">Regras de negócio puras</div></div>
+            <div class="pecas"><span class="peca">Moto · Cliente · Venda</span><span class="peca">DocumentoFiscal + máquina de estados</span><span class="peca">PoliticaImposto A ou B</span></div>
+          </div>
+          <div class="camada animate delay-4">
+            <div><h3>Infraestrutura</h3><div class="papel">Persistência e integração</div></div>
+            <div class="pecas"><span class="peca">Banco SQLite</span><span class="peca">AutorizadorSimulado · contrato JSON</span><span class="peca">Agendador de reenvio</span></div>
+          </div>
+        </div>
+        <div class="nota-camadas animate delay-5">
+          <span><b>Regra:</b> cada camada só conhece a de baixo</span>
+          <span><b>Domínio</b> não depende do banco nem do autorizador</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 · Emissão passo a passo -->
+    <section class="slide steps-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">11 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">04 · Arquitetura preliminar</div>
+          <h2 class="animate delay-2">A emissão passo a passo</h2>
+        </div>
+        <ol class="steps-list">
+          <li class="step animate delay-1"><div class="step-num">01</div><div class="step-copy"><h3>Confirmação chega à API</h3><p>A tela envia a venda confirmada.</p></div><span class="tag">US05</span></li>
+          <li class="step animate delay-2"><div class="step-num">02</div><div class="step-copy"><h3>Procura documento da venda</h3><p>Se já existe, devolve o mesmo, sem novo envio.</p></div><span class="tag">RN01 · RN02</span></li>
+          <li class="step animate delay-3"><div class="step-num">03</div><div class="step-copy"><h3>Cria em Rascunho</h3><p>Calcula o imposto e grava a política usada.</p></div><span class="tag">RN06</span></li>
+          <li class="step animate delay-4"><div class="step-num">04</div><div class="step-copy"><h3>Processando e envio</h3><p>Chama Autorizador.autorizar() com o contrato.</p></div><span class="tag">RNF02</span></li>
+          <li class="step animate delay-5"><div class="step-num">05</div><div class="step-copy"><h3>Aplica a resposta</h3><p>200 Autorizado · 422 Rejeitado · 503 Pendente, com histórico.</p></div><span class="tag">RN07 · RNF03</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 12 · Números -->
+    <section class="slide stats-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">12 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">04 · Arquitetura preliminar</div>
+          <h2 class="animate delay-2">O projeto em números</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card animate delay-1"><div class="stat-value">14</div><div class="stat-label">histórias de usuário</div><p>no backlog do produto</p></div>
+          <div class="stat-card animate delay-2"><div class="stat-value">6</div><div class="stat-label">estados do documento</div><p>de Rascunho a Cancelado</p></div>
+          <div class="stat-card animate delay-3"><div class="stat-value">2</div><div class="stat-label">políticas de imposto</div><p>variantes A e B, didáticas</p></div>
+          <div class="stat-card destaque animate delay-4"><div class="stat-value">25</div><div class="stat-label">testes automatizados</div><p>domínio, emissão e API</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 · Justificativas I -->
+    <section class="slide comparison-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">13 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">05 · Justificativas</div>
+          <h2 class="animate delay-2">Decisões de <span class="accent-text">estrutura</span></h2>
+        </div>
+        <div class="decisoes">
+          <div class="decisao cabecalho animate delay-1"><span>decisão</span><span>em vez de</span><span>por quê</span><span>requisito</span></div>
+          <div class="decisao animate delay-1"><h3>Sistema web</h3><span class="descartada">Programa instalado</span><p>A cliente quer acesso de fora da loja, sem instalação.</p><span class="tag">US01</span></div>
+          <div class="decisao animate delay-2"><h3>Monólito em camadas</h3><span class="descartada">Microsserviços</span><p>Escopo pequeno e três pessoas; camadas já isolam as regras.</p><span class="tag">RNF02 · RNF06</span></div>
+          <div class="decisao animate delay-3"><h3>Máquina de estados</h3><span class="descartada">Campo de status livre</span><p>Impede transições inválidas e registra cada mudança.</p><span class="tag">US07 · RNF03</span></div>
+          <div class="decisao animate delay-4"><h3>SQLite</h3><span class="descartada">PostgreSQL ou MySQL</span><p>Arquivo único, sem servidor, com transações suficientes.</p><span class="tag">RNF04</span></div>
+          <div class="decisao animate delay-5"><h3>Node.js, Express e HTML/JS</h3><span class="descartada">React, Spring</span><p>Mesma linguagem na tela e na API; testes nativos.</p><span class="tag">RNF06 · RNF07</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 · Justificativas II -->
+    <section class="slide comparison-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">14 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">05 · Justificativas</div>
+          <h2 class="animate delay-2">Decisões que protegem as <span class="accent-text">regras</span></h2>
+        </div>
+        <div class="decisoes">
+          <div class="decisao cabecalho animate delay-1"><span>decisão</span><span>em vez de</span><span>por quê</span><span>requisito</span></div>
+          <div class="decisao animate delay-1"><h3>Política como interface</h3><span class="descartada">if com alíquotas na emissão</span><p>Trocar a variante não altera a emissão; cada uma é testada sozinha.</p><span class="tag">US10 · RN06</span></div>
+          <div class="decisao animate delay-2"><h3>Autorizador por contrato JSON</h3><span class="descartada">Chamar o simulador direto</span><p>Outro autorizador entra sem mudar as regras.</p><span class="tag">RNF02 · US11</span></div>
+          <div class="decisao animate delay-3"><h3>Código da venda como chave</h3><span class="descartada">Só desabilitar o botão</span><p>O botão evita clique duplo; a chave barra reenvio e outra aba.</p><span class="tag">RN01 · RN02</span></div>
+          <div class="decisao animate delay-4"><h3>Reserva na confirmação</h3><span class="descartada">Vendida só no fim</span><p>Dois vendedores não vendem a mesma moto durante a emissão.</p><span class="tag">RN03</span></div>
+          <div class="decisao animate delay-5"><h3>Política gravada no documento</h3><span class="descartada">Recalcular com a atual</span><p>Compara variantes sem alterar documentos já emitidos.</p><span class="tag">RN06 · US14</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 · Tecnologias -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">15 / 16</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">05 · Justificativas</div>
+          <h2 class="animate delay-2">Tecnologias escolhidas</h2>
+        </div>
+        <div class="card-grid cols-4">
+          <article class="card animate delay-1"><div class="card-label">API</div><h3>Node.js + Express</h3><p>Rotas REST com verificação de perfil.</p></article>
+          <article class="card animate delay-2"><div class="card-label">Banco</div><h3>SQLite</h3><p>Embutido no Node, com transações para reserva e idempotência.</p></article>
+          <article class="card animate delay-3"><div class="card-label">Telas</div><h3>HTML, CSS e JS</h3><p>Sem framework, servidas pela própria API.</p></article>
+          <article class="card destaque animate delay-4"><div class="card-label">Testes</div><h3>node:test</h3><p>Executor nativo; 25 testes de domínio, emissão e API.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 · Encerramento -->
+    <section class="slide closing-slide">
+      <div class="slide-inner">
+        <div class="slide-counter">16 / 16</div>
+        <div class="closing-content">
+          <div class="hero-logo animate delay-1">
+            <svg role="img" aria-label="Logo do EmiteJá"><use href="#logo"/></svg>
+            <span class="marca">Emite<em>Já</em></span>
+          </div>
+          <h2 class="animate delay-2">O protótipo já está <span class="accent-text">no ar</span></h2>
+          <p class="subtitle animate delay-3">Entre como gerente, faça uma venda e veja o documento passar de Processando a Autorizado.</p>
+          <div class="url animate delay-3">automacao-nota-fiscal.vercel.app</div>
+          <div class="cta-row animate delay-4">
+            <a href="https://automacao-nota-fiscal.vercel.app" class="btn btn-primary" target="_blank" rel="noopener">Abrir o protótipo</a>
+            <a href="https://github.com/Abraaog/AutomacaoNotaFiscal" class="btn btn-secondary" target="_blank" rel="noopener">Repositório no GitHub</a>
+          </div>
+          <div class="hero-meta animate delay-5">
+            <div><span>Equipe · Grupo 04</span><b>Abraão Gomes · Ednaldo Guilherme · Kayk Thierry</b></div>
+            <div><span>Obrigado</span><b>Perguntas?</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsContainer = document.querySelector('.dot-nav');
+
+    function scrollToSlide(index) {
+      const clamped = Math.max(0, Math.min(index, slides.length - 1));
+      slides[clamped].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function buildDots() {
+      slides.forEach((slide, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('aria-label', `Ir para o slide ${index + 1}`);
+        btn.addEventListener('click', () => scrollToSlide(index));
+        dotsContainer.appendChild(btn);
+      });
+    }
+
+    function setActiveDot(index) {
+      dotsContainer.querySelectorAll('button').forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+        if (i === index) dot.setAttribute('aria-current', 'step');
+        else dot.removeAttribute('aria-current');
+      });
+    }
+
+    const slideObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActiveDot(slides.indexOf(entry.target));
+      });
+    }, { threshold: 0.6 });
+
+    const animationObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          animationObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    function initObservers() {
+      slides.forEach((slide) => slideObserver.observe(slide));
+      document.querySelectorAll('.animate').forEach((el) => animationObserver.observe(el));
+    }
+
+    function getCurrentSlideIndex() {
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      slides.forEach((slide, index) => {
+        const distance = Math.abs(slide.getBoundingClientRect().top);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      return closestIndex;
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const atual = getCurrentSlideIndex();
+      if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(event.key)) {
+        event.preventDefault();
+        scrollToSlide(atual + 1);
+      }
+      if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.key)) {
+        event.preventDefault();
+        scrollToSlide(atual - 1);
+      }
+      if (event.key === 'Home') { event.preventDefault(); scrollToSlide(0); }
+      if (event.key === 'End') { event.preventDefault(); scrollToSlide(slides.length - 1); }
+    });
+
+    buildDots();
+    initObservers();
+    setActiveDot(0);
+  </script>
+</body>
+</html>
