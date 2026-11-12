@@ -92,7 +92,7 @@ function htmlCupom(d) {
     : par('Protocolo', 'aguardando');
   const cancelamento = d.protocolo_cancelamento ? par('Cancelamento', esc(d.protocolo_cancelamento)) : '';
   return '<article class="cupom" aria-label="Documento da venda ' + esc(d.venda_codigo) + '">' +
-    '<div class="topo"><b>ROTA MOTOS</b>Documento de venda simulado<br>Venda ' + esc(d.venda_codigo) + '</div>' +
+    '<div class="topo"><img src="/img/logo.svg" alt="" width="28" height="28"><div><b>Rota Motos</b>Documento de venda simulado · venda ' + esc(d.venda_codigo) + '</div></div>' +
     '<hr>' +
     '<div>' + esc(d.cliente_nome) + '</div><div>' + documento(d.cliente_documento) + '</div><div class="discreto">' + esc(d.cliente_endereco) + '</div>' +
     '<hr>' +

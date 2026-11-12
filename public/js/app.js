@@ -57,7 +57,7 @@ function montarQuadro() {
   raiz.innerHTML =
     '<div class="quadro">' +
       '<nav class="trilho" aria-label="Navegação principal">' +
-        '<div class="marca"><strong>EmiteJá</strong><span>Rota Motos</span></div>' +
+        '<div class="marca"><img src="/img/logo.svg" alt="" width="36" height="36"><div><strong>Emite<em>Já</em></strong><span>Rota Motos</span></div></div>' +
         '<ul class="menu">' + itens + '</ul>' +
         '<div class="quem"><b>' + esc(usuario.nome) + '</b><span class="discreto">' + esc(usuario.perfil) + '</span>' +
           '<div><button type="button" class="btn btn-leve" id="sair">Trocar usuário</button></div></div>' +

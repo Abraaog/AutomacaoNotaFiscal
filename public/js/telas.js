@@ -57,7 +57,7 @@ export function telaEntrada(raiz, aoEntrar) {
   }).join('');
   raiz.innerHTML =
     '<main class="entrada"><div class="entrada-caixa">' +
-      '<div class="marca"><strong>EmiteJá</strong><span>Rota Motos · emissão simulada</span></div>' +
+      '<div class="marca"><img src="/img/logo.svg" alt="" width="36" height="36"><div><strong>Emite<em>Já</em></strong><span>Rota Motos · emissão simulada</span></div></div>' +
       '<p class="entrada-instrucao">Entrar como</p>' +
       '<ul class="usuarios-demo">' + opcoes + '</ul>' +
       '<p class="erro-form" id="erro-entrada" role="alert"></p>' +
