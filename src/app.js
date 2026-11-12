@@ -124,3 +124,10 @@ export function criarApp(servicos) {
   app.use(express.static(join(RAIZ, 'public')));
   return app;
 }
+
+// A Vercel pode tomar este arquivo como entrada e exige um export default que seja função.
+// O app de verdade (banco em /tmp, seed) é montado em index.js, carregado só na primeira requisição.
+export default async function entradaVercel(req, res) {
+  const { default: app } = await import('../index.js');
+  return app(req, res);
+}
