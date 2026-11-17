@@ -7,54 +7,22 @@
 
 ## Visão Geral do Projeto
 
-O **EmiteJá** é um sistema web para revendas de motos que une o controle de estoque e de vendas à emissão do documento fiscal da venda. Ao confirmar a venda de uma moto, o sistema gera o documento automaticamente, envia a um autorizador por um contrato de integração, acompanha os estados de processamento e impede que a mesma venda gere dois documentos. A autorização é **simulada**: não há emissão fiscal real nem acesso a serviços governamentais. O cálculo de imposto usa uma política variável e explicitamente didática (alíquota única ou por cilindrada).
+O **EmiteJá** é um sistema em Java para revendas de motos que une o controle de estoque e de vendas à emissão do documento fiscal da venda. Ao confirmar a venda de uma moto, o sistema gera o documento automaticamente, envia a um autorizador por um contrato de integração, acompanha os estados de processamento e impede que a mesma venda gere dois documentos. A autorização é **simulada**: não há emissão fiscal real nem acesso a serviços governamentais. O cálculo de imposto usa uma política variável e explicitamente didática (alíquota única ou por cilindrada).
 
 O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
-## Como executar o protótipo
+## Como executar
 
-Requisito: [Node.js](https://nodejs.org) 22.13 ou superior (usa o SQLite embutido do Node).
+Requisito: JDK 17 ou superior.
+
+Pelo IntelliJ IDEA: abra a pasta do projeto e rode a classe `emiteja.Main`.
+
+Pelo terminal:
 
 ```bash
-npm install
-npm start      # abre em http://localhost:3000
-npm test       # 25 testes automatizados (domínio, emissão e API)
+javac -d out $(find src -name "*.java")
+java -cp out emiteja.Main
 ```
-
-Na primeira execução o sistema cria o banco em `dados/emiteja.db` com motos, clientes e três vendas de exemplo. Para recomeçar do zero, apague a pasta `dados/`.
-
-### Contas de demonstração
-
-Não é preciso senha: o sistema abre direto como `sandra` (Gerente), e o botão **Trocar usuário** lista as outras contas para entrar com um clique. A sessão fica num cookie com o usuário escolhido, por isso continua valendo mesmo em hospedagem serverless (Vercel).
-
-| Usuário | Perfil | O que pode fazer |
-|---|---|---|
-| `marcos`, `paula`, `diego` | Vendedor | Registrar vendas, cadastrar clientes, acompanhar e reenviar documentos |
-| `sandra` | Gerente | Tudo do vendedor, mais cadastrar motos, cancelar documentos, trocar a política de imposto e o cenário do autorizador |
-| `fabio` | Contador | Consultar documentos, ver o painel do mês e exportar o mês em JSON |
-
-### Roteiro sugerido para a apresentação
-
-1. Como `sandra` (a conta que já abre), faça uma venda em **Nova venda** e veja o documento passar de Processando para Autorizado.
-2. No documento, clique em **Pedir emissão de novo**: a mesma venda não gera um segundo documento (RN01).
-3. Em **Configurações**, troque o autorizador para **Rejeição** ou **Indisponível** e faça outra venda para ver os estados Rejeitado e Pendente (com reenvio automático).
-4. Troque a política para a **Variante B** e compare o imposto de motos de cilindradas diferentes.
-5. Cancele um documento autorizado (justificativa com 15 caracteres ou mais) e confira a moto de volta ao estoque.
-6. Em **Trocar usuário**, entre como `fabio` e exporte o mês em **Painel do mês**.
-
-### Variáveis de ambiente (opcionais)
-
-| Variável | Padrão | Uso |
-|---|---|---|
-| `PORT` | `3000` | Porta HTTP |
-| `HOST` | `127.0.0.1` | Endereço de escuta; use `0.0.0.0` em hospedagem |
-| `BANCO` | `dados/emiteja.db` | Caminho do arquivo SQLite |
-| `SENHA_DEMO` | `emiteja` | Senha das contas de demonstração criadas no primeiro uso |
-| `REENVIO_MS` | `60000` | Intervalo entre reenvios automáticos quando o autorizador está indisponível |
-
-### Publicação
-
-O protótipo é um servidor Node contínuo com banco em arquivo. Por isso ele funciona em serviços como Render ou Railway: comando de build `npm install`, comando de início `npm start` e `HOST=0.0.0.0`. Em hospedagem sem disco persistente, o banco volta aos dados de exemplo quando o serviço reinicia. Plataformas serverless (como a Vercel) não mantêm o arquivo do banco entre requisições e exigiriam trocar o SQLite por um banco externo.
 
 ## Documentação
 

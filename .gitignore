@@ -1,3 +1,12 @@
-node_modules/
-dados/
+### IntelliJ IDEA ###
+.idea/workspace.xml
+.idea/shelf/
+out/
+
+### VS Code ###
+.vscode/
+
+### Sistema ###
+*.class
 *.stackdump
+.DS_Store
