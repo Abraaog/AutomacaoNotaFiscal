@@ -6,10 +6,29 @@ public class Main {
         Moto moto = new Moto("9C2KC1670NR000123", "Honda", "CG 160 Fan", 160, 2026, "Vermelha", 15990.00);
         Cliente cliente = new Cliente("Maria Souza", "52998224725", "Rua das Flores, 100 - Rio Tinto/PB", "maria@email.com");
         Usuario vendedor = new Usuario("Marcos Lima", "marcos", "Vendedor");
+        Usuario gerente = new Usuario("Sandra Melo", "sandra", "Gerente");
 
         Venda venda = new Venda("V-0001", moto, cliente, vendedor, "PIX");
 
         System.out.println("==== EmiteJá ====");
+        System.out.println(venda);
+
+        System.out.println("\n==== Mesma moto em outra venda ====");
+        try {
+            new Venda("V-0002", moto, cliente, vendedor, "Cartão");
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("\n==== Vendedor tenta cancelar ====");
+        try {
+            venda.cancelar(vendedor);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("\n==== Gerente cancela ====");
+        venda.cancelar(gerente);
         System.out.println(venda);
 
         System.out.println("\n==== Preço inválido ====");

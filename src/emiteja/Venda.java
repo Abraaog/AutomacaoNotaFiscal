@@ -2,6 +2,9 @@ package emiteja;
 
 public class Venda {
 
+    public static final String CONFIRMADA = "Confirmada";
+    public static final String CANCELADA = "Cancelada";
+
     private final String codigo;
     private final Moto moto;
     private final Cliente cliente;
@@ -20,7 +23,9 @@ public class Venda {
         this.vendedor = vendedor;
         this.formaPagamento = formaPagamento;
         this.valor = moto.getPreco();
-        this.situacao = "Confirmada";
+        this.situacao = CONFIRMADA;
+
+        moto.reservar();
     }
 
     public String getCodigo() {
@@ -49,6 +54,21 @@ public class Venda {
 
     public String getSituacao() {
         return situacao;
+    }
+
+    public boolean estaCancelada() {
+        return situacao.equals(CANCELADA);
+    }
+
+    public void cancelar(Usuario responsavel) {
+        if (!responsavel.podeCancelar()) {
+            throw new IllegalStateException("Só a gerência pode cancelar uma venda");
+        }
+        if (estaCancelada()) {
+            throw new IllegalStateException("A venda " + codigo + " já está cancelada");
+        }
+        situacao = CANCELADA;
+        moto.liberar();
     }
 
     @Override

@@ -2,6 +2,10 @@ package emiteja;
 
 public class Moto {
 
+    public static final String DISPONIVEL = "Disponível";
+    public static final String RESERVADA = "Reservada";
+    public static final String VENDIDA = "Vendida";
+
     private final String chassi;
     private final String marca;
     private final String modelo;
@@ -20,7 +24,7 @@ public class Moto {
         this.modelo = modelo;
         this.cilindrada = cilindrada;
         this.ano = ano;
-        this.situacao = "Disponível";
+        this.situacao = DISPONIVEL;
 
         setCor(cor);
         setPreco(preco);
@@ -70,6 +74,28 @@ public class Moto {
 
     public String getSituacao() {
         return situacao;
+    }
+
+    public boolean estaDisponivel() {
+        return situacao.equals(DISPONIVEL);
+    }
+
+    public void reservar() {
+        if (!estaDisponivel()) {
+            throw new IllegalStateException("A moto " + chassi + " não está disponível (" + situacao + ")");
+        }
+        situacao = RESERVADA;
+    }
+
+    public void marcarVendida() {
+        if (!situacao.equals(RESERVADA)) {
+            throw new IllegalStateException("Só uma moto reservada pode ser marcada como vendida");
+        }
+        situacao = VENDIDA;
+    }
+
+    public void liberar() {
+        situacao = DISPONIVEL;
     }
 
     @Override

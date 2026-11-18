@@ -27,6 +27,10 @@ public class Usuario {
         return perfil;
     }
 
+    public boolean podeCancelar() {
+        return perfil.equals("Gerente");
+    }
+
     @Override
     public String toString() {
         return nome + " (" + perfil + ")";
