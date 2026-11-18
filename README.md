@@ -15,14 +15,41 @@ O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
 Requisito: JDK 17 ou superior.
 
-Pelo IntelliJ IDEA: abra a pasta do projeto e rode a classe `emiteja.app.Main`.
+Pelo IntelliJ IDEA: abra a pasta do projeto e rode a classe `emiteja.app.Main` (menu em JOptionPane) ou `emiteja.app.Demonstracao` (roteiro completo no console).
 
 Pelo terminal:
 
 ```bash
 javac -d out $(find src -name "*.java")
-java -cp out emiteja.app.Main
+java -cp out emiteja.app.Main            # menu em janelas (JOptionPane)
+java -cp out emiteja.app.Demonstracao    # demonstração no console
 ```
+
+Usuários de exemplo: `sandra` (Gerente, pode cancelar), `marcos` (Vendedor) e `fabio` (Contador). A emissão é simulada: nenhum documento tem valor fiscal.
+
+## Estrutura do código
+
+```
+src/emiteja/
+├── modelo/    Moto, Cliente, Usuario, Pessoa (abstrata), Venda, DocumentoFiscal,
+│              PoliticaImposto (abstrata), AliquotaUnica, PorCilindrada
+├── servico/   Loja (estoque, vendas, emissão e cancelamento)
+└── app/       Main, TelaVenda (JOptionPane), Demonstracao (console)
+```
+
+## Entregas por partes
+
+| Parte | Conteúdo da disciplina | Onde aparece no EmiteJá |
+|---|---|---|
+| 1 | Classe, Construtor, Variáveis | `Moto`, `Cliente`, `Usuario` e `Venda` com atributos e construtores; o `Main` monta uma venda |
+| 2 | Métodos | `reservar()`, `marcarVendida()`, `liberar()` na `Moto`; `cancelar()` na `Venda`; `enviar()` e `cancelar()` no `DocumentoFiscal` |
+| 2 | Incremento e Decremento | `motosDisponiveis++`/`--` e `totalVendas++` na `Loja`; `tentativas++` e `proximoNumero++` no `DocumentoFiscal` |
+| 2 | JOptionPane | `TelaVenda`: menu, cadastro, venda, cancelamento e escolhas em janelas |
+| 2 | @Override | `toString()` das classes de modelo; `getIdentificacao()` e `aliquota()` nas subclasses |
+| 2 | Encapsulamento | atributos `private`, getters e setters que validam (`setPreco`, `setNome`) |
+| 2 | Métodos Auxiliares | `cpfValido()`, `cnpjValido()`, `digitoVerificador()` no `Cliente`; `chassiValido()` na `Moto`; `lerTexto()`, `escolher()` na tela |
+| Pacotes | Pacotes | `emiteja.modelo`, `emiteja.servico` e `emiteja.app` |
+| 3 | Herança, Classe Abstrata, Super | `Pessoa` (abstrata) com `Cliente` e `Usuario`; `PoliticaImposto` (abstrata) com `AliquotaUnica` e `PorCilindrada`; construtores com `super(...)` |
 
 ## Documentação
 

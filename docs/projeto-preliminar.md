@@ -186,6 +186,8 @@ flowchart TB
 
 **Tecnologias previstas:** Node.js com Express na API, SQLite no banco, HTML/CSS/JavaScript nas telas e o executor de testes nativo do Node (`node:test`) para os testes automatizados.
 
+> **Atualização:** a implementação passou a ser em **Java**, linguagem da disciplina, construída por partes (classes e construtores; métodos, encapsulamento e JOptionPane; pacotes; herança e classes abstratas). As camadas continuam as mesmas: `emiteja.modelo` (domínio), `emiteja.servico` (aplicação) e `emiteja.app` (apresentação em JOptionPane). O banco e a API REST ficam para uma etapa posterior; por enquanto os dados vivem em memória. Veja o [README](../README.md#entregas-por-partes).
+
 **Emissão passo a passo:**
 
 1. A tela envia a confirmação da venda para a API.
