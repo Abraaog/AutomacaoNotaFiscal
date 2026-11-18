@@ -1,13 +1,13 @@
 package emiteja.modelo;
 
-public class Cliente {
+public class Cliente extends Pessoa {
 
-    private String nome;
     private final String documento;
     private String endereco;
     private String email;
 
     public Cliente(String nome, String documento, String endereco, String email) {
+        super(nome);
         String digitos = somenteDigitos(documento);
         if (!documentoValido(digitos)) {
             throw new IllegalArgumentException("CPF ou CNPJ inválido: " + documento);
@@ -15,19 +15,11 @@ public class Cliente {
         this.documento = digitos;
         this.endereco = endereco;
         this.email = email;
-
-        setNome(nome);
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("Informe o nome do cliente");
-        }
-        this.nome = nome;
+    @Override
+    public String getIdentificacao() {
+        return (ehPessoaJuridica() ? "CNPJ " : "CPF ") + documento;
     }
 
     public String getDocumento() {
@@ -100,10 +92,5 @@ public class Cliente {
         int d1 = digitoVerificador(cnpj, new int[]{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2});
         int d2 = digitoVerificador(cnpj, new int[]{6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2});
         return cnpj.charAt(12) - '0' == d1 && cnpj.charAt(13) - '0' == d2;
-    }
-
-    @Override
-    public String toString() {
-        return nome + (ehPessoaJuridica() ? " - CNPJ " : " - CPF ") + documento;
     }
 }
