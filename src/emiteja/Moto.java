@@ -16,10 +16,13 @@ public class Moto {
     private String situacao;
 
     public Moto(String chassi, String marca, String modelo, int cilindrada, int ano, String cor, double preco) {
+        if (!chassiValido(chassi)) {
+            throw new IllegalArgumentException("Chassi inválido: deve ter 17 caracteres, sem as letras I, O e Q");
+        }
         if (cilindrada <= 0) {
             throw new IllegalArgumentException("A cilindrada deve ser maior que zero");
         }
-        this.chassi = chassi;
+        this.chassi = chassi.toUpperCase();
         this.marca = marca;
         this.modelo = modelo;
         this.cilindrada = cilindrada;
@@ -96,6 +99,10 @@ public class Moto {
 
     public void liberar() {
         situacao = DISPONIVEL;
+    }
+
+    private static boolean chassiValido(String chassi) {
+        return chassi != null && chassi.toUpperCase().matches("[A-HJ-NPR-Z0-9]{17}");
     }
 
     @Override

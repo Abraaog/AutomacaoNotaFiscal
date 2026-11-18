@@ -31,6 +31,23 @@ public class Main {
         venda.cancelar(gerente);
         System.out.println(venda);
 
+        System.out.println("\n==== CPF inválido ====");
+        try {
+            new Cliente("João", "123.456.789-00", "Rua A", "joao@email.com");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("\n==== Cliente com CNPJ ====");
+        System.out.println(new Cliente("Auto Peças Rio Tinto LTDA", "11.222.333/0001-81", "Av. Brasil, 50", "contato@autopecas.com"));
+
+        System.out.println("\n==== Chassi inválido ====");
+        try {
+            new Moto("ABC", "Yamaha", "Fazer 250", 250, 2026, "Azul", 22990.00);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
         System.out.println("\n==== Preço inválido ====");
         try {
             moto.setPreco(-10);
