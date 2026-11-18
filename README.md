@@ -15,13 +15,13 @@ O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
 Requisito: JDK 17 ou superior.
 
-Pelo IntelliJ IDEA: abra a pasta do projeto e rode a classe `emiteja.Main`.
+Pelo IntelliJ IDEA: abra a pasta do projeto e rode a classe `emiteja.app.Main`.
 
 Pelo terminal:
 
 ```bash
 javac -d out $(find src -name "*.java")
-java -cp out emiteja.Main
+java -cp out emiteja.app.Main
 ```
 
 ## Documentação

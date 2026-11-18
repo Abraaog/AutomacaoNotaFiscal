@@ -1,4 +1,4 @@
-package emiteja;
+package emiteja.modelo;
 
 public class Usuario {
 

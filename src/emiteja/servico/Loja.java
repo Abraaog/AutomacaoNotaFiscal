@@ -1,4 +1,10 @@
-package emiteja;
+package emiteja.servico;
+
+import emiteja.modelo.Cliente;
+import emiteja.modelo.DocumentoFiscal;
+import emiteja.modelo.Moto;
+import emiteja.modelo.Usuario;
+import emiteja.modelo.Venda;
 
 import java.util.ArrayList;
 import java.util.List;

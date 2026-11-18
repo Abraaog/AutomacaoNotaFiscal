@@ -1,4 +1,10 @@
-package emiteja;
+package emiteja.app;
+
+import emiteja.modelo.Cliente;
+import emiteja.modelo.DocumentoFiscal;
+import emiteja.modelo.Moto;
+import emiteja.modelo.Usuario;
+import emiteja.servico.Loja;
 
 public class Demonstracao {
 
