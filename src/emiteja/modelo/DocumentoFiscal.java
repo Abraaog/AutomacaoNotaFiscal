@@ -13,7 +13,6 @@ public class DocumentoFiscal {
     public static final String CANCELADO = "Cancelado";
 
     public static final int MAX_TENTATIVAS = 3;
-    public static final double ALIQUOTA = 0.10;
     private static final int TAMANHO_MINIMO_JUSTIFICATIVA = 15;
 
     private static int proximoNumero = 1;
@@ -21,19 +20,21 @@ public class DocumentoFiscal {
     private final int numero;
     private final Venda venda;
     private final double valorImposto;
+    private final String politicaAplicada;
     private final List<String> historico = new ArrayList<>();
     private String estado;
     private String protocolo;
     private String motivoRejeicao;
     private int tentativas;
 
-    public DocumentoFiscal(Venda venda) {
-        if (venda == null) {
-            throw new IllegalArgumentException("O documento precisa de uma venda");
+    public DocumentoFiscal(Venda venda, PoliticaImposto politica) {
+        if (venda == null || politica == null) {
+            throw new IllegalArgumentException("O documento precisa de uma venda e de uma política de imposto");
         }
         this.numero = proximoNumero++;
         this.venda = venda;
-        this.valorImposto = calcularImposto(venda.getValor());
+        this.valorImposto = politica.calcular(venda.getMoto(), venda.getValor());
+        this.politicaAplicada = politica.getNome();
         this.tentativas = 0;
         mudarEstado(RASCUNHO);
     }
@@ -87,6 +88,10 @@ public class DocumentoFiscal {
         return valorImposto;
     }
 
+    public String getPoliticaAplicada() {
+        return politicaAplicada;
+    }
+
     public String getEstado() {
         return estado;
     }
@@ -122,10 +127,6 @@ public class DocumentoFiscal {
         estado = novoEstado;
     }
 
-    private static double calcularImposto(double valor) {
-        return Math.round(valor * ALIQUOTA * 100) / 100.0;
-    }
-
     private String gerarProtocolo() {
         return String.format("SIM-%06d-%s", numero, venda.getCodigo());
     }
@@ -133,7 +134,7 @@ public class DocumentoFiscal {
     @Override
     public String toString() {
         String texto = "Documento nº " + numero + " da venda " + venda.getCodigo() + " - " + estado
-                + String.format(" - imposto R$ %.2f", valorImposto)
+                + String.format(" - imposto R$ %.2f", valorImposto) + " [" + politicaAplicada + "]"
                 + " - tentativas: " + tentativas;
         if (protocolo != null) {
             texto += " - protocolo " + protocolo;

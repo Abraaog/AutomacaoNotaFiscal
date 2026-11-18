@@ -1,8 +1,10 @@
 package emiteja.servico;
 
+import emiteja.modelo.AliquotaUnica;
 import emiteja.modelo.Cliente;
 import emiteja.modelo.DocumentoFiscal;
 import emiteja.modelo.Moto;
+import emiteja.modelo.PoliticaImposto;
 import emiteja.modelo.Usuario;
 import emiteja.modelo.Venda;
 
@@ -16,6 +18,7 @@ public class Loja {
     private int motosDisponiveis;
     private int totalVendas;
     private String cenarioAutorizador = "Sucesso";
+    private PoliticaImposto politicaAtiva = new AliquotaUnica();
 
     public void cadastrarMoto(Moto moto) {
         if (buscarMoto(moto.getChassi()) != null) {
@@ -50,7 +53,7 @@ public class Loja {
         if (existente != null) {
             return existente;
         }
-        DocumentoFiscal documento = new DocumentoFiscal(venda);
+        DocumentoFiscal documento = new DocumentoFiscal(venda, politicaAtiva);
         documentos.add(documento);
         documento.enviar(cenarioAutorizador);
         return documento;
@@ -95,6 +98,17 @@ public class Loja {
 
     public int getTotalVendas() {
         return totalVendas;
+    }
+
+    public PoliticaImposto getPoliticaAtiva() {
+        return politicaAtiva;
+    }
+
+    public void setPoliticaAtiva(PoliticaImposto politicaAtiva) {
+        if (politicaAtiva == null) {
+            throw new IllegalArgumentException("Escolha uma política de imposto");
+        }
+        this.politicaAtiva = politicaAtiva;
     }
 
     public String getCenarioAutorizador() {
