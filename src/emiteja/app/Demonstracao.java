@@ -3,6 +3,8 @@ package emiteja.app;
 import emiteja.modelo.Cliente;
 import emiteja.modelo.DocumentoFiscal;
 import emiteja.modelo.Moto;
+import emiteja.modelo.Pessoa;
+import emiteja.modelo.PorCilindrada;
 import emiteja.modelo.Usuario;
 import emiteja.servico.Loja;
 
@@ -58,6 +60,17 @@ public class Demonstracao {
             loja.cancelar(doc2, gerente, "desistiu");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
+        }
+
+        System.out.println("\n==== Variante B: imposto por cilindrada ====");
+        loja.setPoliticaAtiva(new PorCilindrada());
+        DocumentoFiscal doc3 = loja.vender("9C2PC4000R0007890", maria, vendedor, "Financiamento");
+        System.out.println(doc3);
+
+        System.out.println("\n==== Herança: Cliente e Usuario são Pessoa ====");
+        Pessoa[] pessoas = {maria, empresa, vendedor, gerente};
+        for (Pessoa pessoa : pessoas) {
+            System.out.println(pessoa);
         }
     }
 }

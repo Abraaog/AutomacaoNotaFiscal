@@ -1,8 +1,11 @@
 package emiteja.app;
 
+import emiteja.modelo.AliquotaUnica;
 import emiteja.modelo.Cliente;
 import emiteja.modelo.DocumentoFiscal;
 import emiteja.modelo.Moto;
+import emiteja.modelo.PoliticaImposto;
+import emiteja.modelo.PorCilindrada;
 import emiteja.modelo.Usuario;
 import emiteja.servico.Loja;
 
@@ -54,6 +57,7 @@ public class TelaVenda {
 
     private String montarMenu() {
         return "Usuário: " + usuarioAtual + "   |   Autorizador: " + loja.getCenarioAutorizador()
+                + "\nImposto: " + loja.getPoliticaAtiva()
                 + "\nMotos disponíveis: " + loja.getMotosDisponiveis()
                 + "\n\n1 - Ver estoque"
                 + "\n2 - Cadastrar moto"
@@ -63,6 +67,7 @@ public class TelaVenda {
                 + "\n6 - Cancelar documento"
                 + "\n7 - Trocar cenário do autorizador"
                 + "\n8 - Trocar usuário"
+                + "\n9 - Trocar política de imposto"
                 + "\n0 - Sair";
     }
 
@@ -76,6 +81,7 @@ public class TelaVenda {
             case 6 -> cancelarDocumento();
             case 7 -> trocarCenario();
             case 8 -> usuarioAtual = escolher("Entrar como:", usuarios.toArray(new Usuario[0]));
+            case 9 -> trocarPolitica();
             case 0 -> mostrar("Até logo!");
             default -> mostrarErro("Opção inválida");
         }
@@ -124,6 +130,11 @@ public class TelaVenda {
 
     private void trocarCenario() {
         loja.setCenarioAutorizador(escolher("Resposta do autorizador simulado:", CENARIOS));
+    }
+
+    private void trocarPolitica() {
+        PoliticaImposto[] politicas = {new AliquotaUnica(), new PorCilindrada()};
+        loja.setPoliticaAtiva(escolher("Política de imposto:", politicas));
     }
 
     private String listarEstoque() {
