@@ -8,6 +8,8 @@ public class ExecutarTestes {
 
     public static void main(String[] args) {
         List<SuiteDeTeste> suites = List.of(
+                new TestePessoas(),
+                new TesteMoto(),
                 new TesteImposto(),
                 new TesteDocumentoFiscal());
 
