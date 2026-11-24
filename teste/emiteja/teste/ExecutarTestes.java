@@ -12,7 +12,8 @@ public class ExecutarTestes {
                 new TesteMoto(),
                 new TesteImposto(),
                 new TesteDocumentoFiscal(),
-                new TesteLoja());
+                new TesteLoja(),
+                new TesteObserver());
 
         int aprovados = 0;
         List<String> falhas = new ArrayList<>();

@@ -7,6 +7,7 @@ import emiteja.modelo.Moto;
 import emiteja.modelo.PoliticaImposto;
 import emiteja.modelo.Usuario;
 import emiteja.modelo.Venda;
+import emiteja.observer.ObservadorDocumento;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,20 @@ public class Loja {
     private int totalVendas;
     private String cenarioAutorizador = "Sucesso";
     private PoliticaImposto politicaAtiva = new AliquotaUnica();
+    private final List<ObservadorDocumento> observadores = new ArrayList<>();
+
+    public void cadastrarObservador(ObservadorDocumento observador) {
+        if (observador == null) {
+            throw new IllegalArgumentException("O observador não pode ser nulo");
+        }
+        if (!observadores.contains(observador)) {
+            observadores.add(observador);
+        }
+    }
+
+    public void removerObservador(ObservadorDocumento observador) {
+        observadores.remove(observador);
+    }
 
     public void cadastrarMoto(Moto moto) {
         if (buscarMoto(moto.getChassi()) != null) {
@@ -56,6 +71,7 @@ public class Loja {
         DocumentoFiscal documento = new DocumentoFiscal(venda, politicaAtiva);
         documentos.add(documento);
         documento.enviar(cenarioAutorizador);
+        notificarObservadores(documento);
         return documento;
     }
 
@@ -64,6 +80,7 @@ public class Loja {
         for (DocumentoFiscal documento : documentos) {
             if (documento.estaPendente()) {
                 documento.enviar(cenarioAutorizador);
+                notificarObservadores(documento);
                 reenviados++;
             }
         }
@@ -73,6 +90,7 @@ public class Loja {
     public void cancelar(DocumentoFiscal documento, Usuario responsavel, String justificativa) {
         documento.cancelar(responsavel, justificativa);
         motosDisponiveis++;
+        notificarObservadores(documento);
     }
 
     public DocumentoFiscal buscarDocumento(String codigoVenda) {
@@ -121,6 +139,12 @@ public class Loja {
             throw new IllegalArgumentException("Cenário inválido: " + cenarioAutorizador);
         }
         this.cenarioAutorizador = cenarioAutorizador;
+    }
+
+    private void notificarObservadores(DocumentoFiscal documento) {
+        for (ObservadorDocumento observador : observadores) {
+            observador.documentoAtualizado(documento);
+        }
     }
 
     private String gerarCodigoVenda() {
