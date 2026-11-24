@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmiteJá · Apresentação Parcial 2 · Grupo 04</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f7a4d'/%3E%3Cpath d='M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z' fill='%23fff'/%3E%3Cpath d='M24.5 42.5l5 5 10-11' fill='none' stroke='%231f7a4d' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Sistema da skill construtor-apresentacoes com a paleta do EmiteJá ("nota fiscal verde"). */
+    :root {
+      --bg: #0e2b20;
+      --bg-soft: #123d2c;
+      --surface: rgba(255,255,255,0.045);
+      --surface-2: rgba(255,255,255,0.075);
+      --text: #f1f7f3;
+      --text-soft: #a8c3b4;
+      --text-faint: #6f8f7e;
+      --line: rgba(255,255,255,0.10);
+
+      --accent: #6fd3a0;
+      --accent-2: #1f7a4d;
+      --accent-3: #bfe3cf;
+
+      --e-autorizado: #6fd3a0;
+      --e-processando: #86b4f0;
+      --e-pendente: #f0c46a;
+      --e-rejeitado: #ff8f86;
+      --e-rascunho: #a8b8af;
+
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.28);
+      --shadow-glow: 0 0 0 1px rgba(111,211,160,0.22), 0 0 36px rgba(111,211,160,0.10);
+
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 22px;
+      --radius-xl: 28px;
+
+      --fs-display: clamp(44px, min(6.4vw, 10.5vh), 92px);
+      --fs-h2: clamp(28px, min(3.4vw, 6.2vh), 48px);
+      --fs-h3: clamp(19px, 1.75vw, 25px);
+      --fs-body-lg: clamp(18px, 1.45vw, 23px);
+      --fs-body: clamp(15px, 1.15vw, 18px);
+      --fs-small: 14px;
+      --fs-mono: 13px;
+
+      --container-pad-y: 56px;
+      --container-pad-x: 72px;
+      --content-max: 1280px;
+
+      --anim-duration: 0.7s;
+      --anim-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(111,211,160,0.10), transparent 32%),
+        radial-gradient(circle at 85% 75%, rgba(31,122,77,0.22), transparent 34%),
+        linear-gradient(180deg, #10301f 0%, #0b2219 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: "IBM Plex Sans", sans-serif;
+      font-variant-numeric: tabular-nums;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3, p, blockquote, ul, ol { margin: 0; }
+
+    .slide {
+      position: relative;
+      height: 100vh;
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: grid;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    /* Grade fina de formulário (DANFE) no lugar da grade do template */
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 95%);
+      opacity: 0.45;
+      z-index: 0;
+    }
+
+    .slide-inner {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      width: min(100%, calc(var(--content-max) + (var(--container-pad-x) * 2)));
+      margin: 0 auto;
+      padding: var(--container-pad-y) var(--container-pad-x);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(20px, 3.2vh, 34px);
+    }
+
+    .slide-counter {
+      position: absolute;
+      top: 28px;
+      right: 36px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: var(--fs-mono);
+      letter-spacing: 0.12em;
+      color: var(--text-faint);
+      z-index: 3;
+    }
+
+    .slide-brand {
+      position: absolute;
+      top: 22px;
+      left: 36px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-soft);
+      z-index: 3;
+    }
+    .slide-brand svg { width: 26px; height: 26px; }
+    .slide-brand em { font-style: normal; color: var(--accent); }
+
+    .mono { font-family: "IBM Plex Mono", monospace; }
+
+    .eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      font-size: var(--fs-body-lg);
+      line-height: 1.45;
+      color: var(--text-soft);
+    }
+
+    h1 {
+      font-size: var(--fs-display);
+      font-weight: 700;
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      max-width: 13ch;
+      text-wrap: balance;
+    }
+
+    h2 {
+      font-size: var(--fs-h2);
+      font-weight: 600;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      max-width: 22ch;
+      text-wrap: balance;
+    }
+
+    h3 {
+      font-size: var(--fs-h3);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+
+    p, li {
+      font-size: var(--fs-body);
+      line-height: 1.45;
+      color: var(--text-soft);
+      text-wrap: pretty;
+    }
+
+    .accent-text { color: var(--accent); }
+
+    .section-heading { display: flex; flex-direction: column; gap: 10px; max-width: 900px; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(111,211,160,0.25);
+      background: rgba(111,211,160,0.08);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12.5px;
+      color: var(--accent-3);
+      white-space: nowrap;
+    }
+
+    /* Título */
+    .hero { display: flex; flex-direction: column; gap: 22px; max-width: 1000px; }
+    .hero-logo { display: flex; align-items: center; gap: 18px; }
+    .hero-logo svg { width: clamp(64px, 7vw, 96px); height: clamp(64px, 7vw, 96px); filter: drop-shadow(0 10px 30px rgba(31,122,77,0.45)); }
+    .hero-logo .marca { font-size: clamp(32px, 3.4vw, 46px); font-weight: 700; letter-spacing: -0.03em; }
+    .hero-logo .marca em { font-style: normal; color: var(--accent); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 10px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .hero-meta div { display: flex; flex-direction: column; gap: 4px; }
+    .hero-meta span { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--text-faint); }
+    .hero-meta b { font-weight: 500; font-size: 16px; color: var(--text); }
+
+    /* Cards */
+    .card-grid { display: grid; gap: 18px; }
+    .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: clamp(18px, 2.4vh, 26px) 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card.destaque { border-color: rgba(111,211,160,0.32); box-shadow: var(--shadow-glow); }
+    .card-label { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-mono); color: var(--accent); }
+    .card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; }
+
+    .roteiro .card { min-height: 26vh; justify-content: space-between; }
+    .roteiro .card-label { font-size: clamp(34px, 3.4vw, 52px); font-weight: 500; color: var(--accent); letter-spacing: -0.03em; }
+
+    /* Problema / solução */
+    .comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .comparison-col {
+      border-radius: var(--radius-lg);
+      padding: 28px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+    }
+    .comparison-col.accent { background: linear-gradient(180deg, rgba(111,211,160,0.10), rgba(111,211,160,0.03)); border-color: rgba(111,211,160,0.32); box-shadow: var(--shadow-glow); }
+    .comparison-col ul { list-style: none; padding: 0; display: grid; gap: 12px; }
+    .comparison-col li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; color: var(--text); }
+    .comparison-col li::before { content: ""; width: 10px; height: 10px; margin-top: 0.5em; border-radius: 50%; background: var(--e-rejeitado); opacity: 0.85; }
+    .comparison-col.accent li::before { background: var(--accent); }
+    .comparison-col.muted li { color: var(--text-soft); }
+
+    /* Declaração */
+    .statement-wrap { display: flex; flex-direction: column; gap: 22px; max-width: 1100px; }
+    .statement { font-size: clamp(40px, 5.2vw, 78px); font-weight: 600; line-height: 1.04; letter-spacing: -0.035em; color: var(--text); text-wrap: balance; }
+    .quote-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Fluxo de estados */
+    .fluxo { display: grid; grid-template-columns: 1fr 64px minmax(260px, 0.75fr); align-items: center; }
+    .cadeia { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; align-items: center; }
+    .no {
+      padding: 20px 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 150px;
+    }
+    .no p { font-size: 15px; }
+    .seta { height: 2px; background: linear-gradient(90deg, rgba(111,211,160,0.15), rgba(111,211,160,0.7)); position: relative; }
+    .seta::after { content: ""; position: absolute; right: -2px; top: -5px; border: 6px solid transparent; border-left: 9px solid rgba(111,211,160,0.8); border-right: none; }
+    .garfo { width: 64px; height: 300px; }
+    .saidas { display: grid; gap: 14px; }
+    .saida { padding: 14px 18px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-left: 4px solid currentColor; display: grid; gap: 2px; }
+    .saida b { font-size: 18px; }
+    .saida span { font-size: 14.5px; color: var(--text-soft); }
+    .estado-dot { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+    .estado-dot::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+    .s-autorizado { color: var(--e-autorizado); }
+    .s-processando { color: var(--e-processando); }
+    .s-pendente { color: var(--e-pendente); }
+    .s-rejeitado { color: var(--e-rejeitado); }
+    .s-rascunho { color: var(--e-rascunho); }
+
+    /* Diagramas de classes (SVG) */
+    .uml { width: 100%; height: auto; max-height: 58vh; display: block; }
+    .uml .caixa { fill: #133a2a; stroke: rgba(255,255,255,0.16); stroke-width: 1.5; }
+    .uml .caixa.interface { fill: #123224; stroke: rgba(111,211,160,0.55); stroke-dasharray: 7 5; }
+    .uml .caixa.principal { stroke: rgba(111,211,160,0.6); stroke-width: 2; }
+    .uml .cabeca { fill: #1f7a4d; }
+    .uml .nome { fill: #ffffff; font: 600 21px "IBM Plex Sans", sans-serif; }
+    .uml .estereotipo { fill: var(--accent); font: 500 14px "IBM Plex Mono", monospace; }
+    .uml .attr { fill: #cfe1d6; font: 400 16px "IBM Plex Mono", monospace; }
+    .uml .metodo { fill: var(--accent); font: 500 16px "IBM Plex Mono", monospace; }
+    .uml .rotulo { fill: var(--text-soft); font: 500 15px "IBM Plex Sans", sans-serif; }
+    .uml .mult { fill: var(--accent-3); font: 500 14px "IBM Plex Mono", monospace; }
+    .uml .linha { stroke: rgba(191,227,207,0.75); stroke-width: 2; fill: none; }
+    .uml .linha.tracejada { stroke-dasharray: 8 6; }
+    .uml .linha.realiza { stroke: #6fd3a0; }
+    .legenda-uml { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--text-faint); }
+    .legenda-uml b { color: var(--text-soft); font-weight: 500; }
+
+    /* Arquitetura em camadas */
+    .camadas { display: grid; gap: 10px; }
+    .camada {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 24px;
+      align-items: center;
+      padding: clamp(12px, 1.8vh, 18px) 22px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.09);
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015));
+      position: relative;
+    }
+    .camada.dominio { border-color: rgba(111,211,160,0.35); box-shadow: var(--shadow-glow); background: linear-gradient(90deg, rgba(111,211,160,0.12), rgba(111,211,160,0.02)); }
+    .camada h3 { font-size: clamp(18px, 1.6vw, 22px); }
+    .camada .papel { font-size: 14px; color: var(--text-soft); margin-top: 3px; }
+    .camada .pecas { display: flex; flex-wrap: wrap; gap: 8px; }
+    .peca { padding: 7px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); font-family: "IBM Plex Mono", monospace; font-size: 14px; color: var(--text); }
+    .camada + .camada::before { content: ""; position: absolute; left: 124px; top: -11px; width: 2px; height: 10px; background: rgba(111,211,160,0.6); }
+    .nota-camadas { display: flex; gap: 22px; flex-wrap: wrap; font-size: 14.5px; color: var(--text-soft); }
+    .nota-camadas b { color: var(--accent); font-weight: 600; }
+
+    /* Etapas */
+    .steps-list { list-style: none; padding: 0; display: grid; }
+    .step { display: grid; grid-template-columns: 64px 1fr auto; gap: 18px; align-items: center; padding: clamp(10px, 1.7vh, 16px) 0; border-bottom: 1px solid var(--line); }
+    .step:first-child { border-top: 1px solid var(--line); }
+    .step-num { font-family: "IBM Plex Mono", monospace; color: var(--accent); font-size: clamp(18px, 1.7vw, 24px); font-weight: 500; }
+    .step-copy { display: flex; flex-direction: column; gap: 3px; }
+    .step-copy p { font-size: 15.5px; }
+
+    /* Estatísticas */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+    .stat-card {
+      padding: 26px 24px;
+      min-height: 30vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 8px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.09);
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+      box-shadow: var(--shadow-soft);
+    }
+    .stat-card.destaque { border-color: rgba(111,211,160,0.32); box-shadow: var(--shadow-glow); }
+    .stat-value { font-size: clamp(64px, 7.5vw, 120px); font-weight: 600; line-height: 0.9; letter-spacing: -0.05em; color: var(--text); }
+    .stat-card.destaque .stat-value { color: var(--accent); }
+    .stat-label { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--accent); }
+
+    /* Justificativas */
+    .decisoes { display: grid; }
+    .decisao { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.9fr) minmax(0, 1.5fr) 150px; gap: 22px; align-items: center; padding: clamp(11px, 1.8vh, 17px) 4px; border-bottom: 1px solid var(--line); }
+    .decisao.cabecalho { padding-top: 0; padding-bottom: 8px; font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--text-faint); }
+    .decisao h3 { font-size: clamp(17px, 1.45vw, 21px); color: var(--text); }
+    .decisao .descartada { font-size: 15px; color: var(--text-faint); text-decoration: line-through; text-decoration-color: rgba(255,143,134,0.6); }
+    .decisao p { font-size: 15px; }
+    .decisao .tag { justify-self: end; }
+
+    /* Encerramento */
+    .closing-content { display: flex; flex-direction: column; gap: 20px; max-width: 980px; }
+    .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 54px;
+      padding: 0 22px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 16px;
+      font-weight: 600;
+      transition-property: transform, background-color, border-color;
+      transition-duration: 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #0b2219; box-shadow: var(--shadow-glow); }
+    .btn-secondary { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.16); color: var(--text); }
+    .url { font-family: "IBM Plex Mono", monospace; font-size: clamp(18px, 1.7vw, 24px); color: var(--accent-3); }
+
+    /* Animações (motor da skill) */
+    .animate {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity var(--anim-duration) var(--anim-ease), transform var(--anim-duration) var(--anim-ease);
+    }
+    .animate.in { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 90ms; }
+    .delay-2 { transition-delay: 180ms; }
+    .delay-3 { transition-delay: 270ms; }
+    .delay-4 { transition-delay: 360ms; }
+    .delay-5 { transition-delay: 450ms; }
+    .delay-6 { transition-delay: 540ms; }
+
+    .dot-nav { position: fixed; top: 50%; right: 18px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 9px; z-index: 100; }
+    .dot-nav button {
+      width: 10px; height: 10px; border-radius: 999px; border: none; padding: 0;
+      background: rgba(255,255,255,0.22);
+      cursor: pointer;
+      transition-property: transform, background-color, box-shadow;
+      transition-duration: 0.2s;
+    }
+    .dot-nav button.active { background: var(--accent); box-shadow: 0 0 0 5px rgba(111,211,160,0.14); transform: scale(1.15); }
+    .dot-nav button:hover { transform: scale(1.1); }
+    .dot-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .animate { opacity: 1; transform: none; transition: none; }
+    }
+
+    @media (max-height: 700px) {
+      .slide-brand { display: none; }
+    }
+
+    @media (max-height: 760px) {
+      :root { --container-pad-y: 48px; }
+      .no { min-height: 130px; }
+      .stat-card { min-height: 26vh; }
+    }
+
+    @media (max-width: 1100px) {
+      :root { --container-pad-x: 40px; }
+      .cols-4, .cols-5, .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cols-3, .comparison-grid { grid-template-columns: 1fr; }
+      .camada { grid-template-columns: 1fr; gap: 10px; }
+      .camada + .camada::before { display: none; }
+      .decisao { grid-template-columns: 1fr; gap: 4px; }
+      .decisao .tag { justify-self: start; }
+      .decisao.cabecalho { display: none; }
+      .fluxo, .cadeia { grid-template-columns: 1fr; gap: 12px; }
+      .seta, .garfo { display: none; }
+      .slide, .slide-inner { height: auto; }
+    }
+    /* Parcial 2 */
+    .garfo .ramo { fill: none; stroke: rgba(111,211,160,0.6); stroke-width: 2; }
+    .org { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 22px; align-items: stretch; }
+    .org .card-grid { grid-template-rows: repeat(3, 1fr); }
+    .org .card p { font-size: 15.5px; }
+    .org .card b { color: var(--text); font-weight: 600; }
+    .arvore { margin: 0; padding: 24px 26px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.09); background: rgba(5,20,14,0.55); font: 400 clamp(13.5px, 1.05vw, 16px)/1.7 "IBM Plex Mono", monospace; color: var(--text-soft); white-space: pre; overflow: hidden; }
+    .arvore .d { color: var(--accent); }
+    .stat-card p { font-size: 14.5px; }
+    @media (max-width: 1100px) { .org { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="dot-nav" aria-label="Navegação entre slides"></nav>
+
+  <!-- Logo do EmiteJá e marcadores dos diagramas, reaproveitados nos slides -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="14" fill="#1f7a4d"/>
+      <path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#ffffff"/>
+      <path d="M38 12v7a2 2 0 0 0 2 2h7z" fill="#bfe3cf"/>
+      <rect x="22" y="22" width="11" height="3" rx="1.5" fill="#9fb8aa"/>
+      <rect x="22" y="29" width="20" height="3" rx="1.5" fill="#9fb8aa"/>
+      <path d="M24.5 42.5l5 5 10-11" fill="none" stroke="#1f7a4d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <defs>
+      <marker id="seta-cheia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 Z" fill="#bfe3cf"/>
+      </marker>
+      <marker id="realiza" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="13" markerHeight="13" orient="auto-start-reverse">
+        <path d="M0 0 L12 6 L0 12 Z" fill="#0e2b20" stroke="#6fd3a0" stroke-width="1.5"/>
+      </marker>
+      <marker id="composicao" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="16" markerHeight="10" orient="auto">
+        <path d="M0 5 L8 0 L16 5 L8 10 Z" fill="#bfe3cf"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <main class="presentation">
+    <!-- 01 · Título -->
+    <section class="slide title-slide">
+      <div class="slide-inner">
+        <div class="slide-counter">01 / 08</div>
+        <div class="hero">
+          <div class="hero-logo animate delay-1">
+            <svg role="img" aria-label="Logo do EmiteJá"><use href="#logo"/></svg>
+            <span class="marca">Emite<em>Já</em></span>
+          </div>
+          <div class="eyebrow animate delay-2">Apresentação Parcial 2 · Análise e Projeto de Sistemas</div>
+          <h1 class="animate delay-3">Do projeto ao <span class="accent-text">código que roda</span></h1>
+          <p class="subtitle animate delay-4">Venda de motos com emissão simulada do documento fiscal, em Java puro: arquitetura, demonstração, padrões e testes.</p>
+          <div class="hero-meta animate delay-5">
+            <div><span>Equipe · Grupo 04</span><b>Abraão Gomes · Ednaldo Guilherme · Kayk Thierry</b></div>
+            <div><span>Repositório</span><b class="mono">Abraaog/AutomacaoNotaFiscal</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Arquitetura implementada -->
+    <section class="slide layers-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">02 / 08</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">Arquitetura implementada</div>
+          <h2 class="animate delay-2">Três camadas, cada uma só conversa com a de baixo</h2>
+        </div>
+        <div class="camadas">
+          <div class="camada animate delay-2">
+            <div><h3>app</h3><div class="papel">Interface com o usuário</div></div>
+            <div class="pecas"><span class="peca">Main</span><span class="peca">TelaVenda · JOptionPane</span><span class="peca">Demonstracao · console</span></div>
+          </div>
+          <div class="camada animate delay-3">
+            <div><h3>servico</h3><div class="papel">Regras da loja</div></div>
+            <div class="pecas"><span class="peca">Loja</span><span class="peca">vender()</span><span class="peca">emitir()</span><span class="peca">reenviarPendentes()</span><span class="peca">cancelar()</span></div>
+          </div>
+          <div class="camada dominio animate delay-4">
+            <div><h3>modelo</h3><div class="papel">Domínio e validações</div></div>
+            <div class="pecas"><span class="peca">Pessoa ▸ Cliente, Usuario</span><span class="peca">Moto</span><span class="peca">Venda</span><span class="peca">DocumentoFiscal</span><span class="peca">PoliticaImposto ▸ A, B</span></div>
+          </div>
+        </div>
+        <div class="nota-camadas animate delay-5">
+          <span><b>Autorizador simulado:</b> a Loja escolhe o cenário (Sucesso, Rejeição ou Indisponível)</span>
+          <span><b>Nada tem valor fiscal:</b> protocolo <span class="mono">SIM-…</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Estados do documento -->
+    <section class="slide diagram-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">03 / 08</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">O coração do sistema · DocumentoFiscal</div>
+          <h2 class="animate delay-2">Todo documento segue a mesma máquina de estados</h2>
+        </div>
+        <div class="fluxo animate delay-3">
+          <div class="cadeia">
+            <div class="no"><span class="estado-dot s-rascunho">Rascunho</span><p>Criado com o imposto da política ativa.</p></div>
+            <div class="seta"></div>
+            <div class="no"><span class="estado-dot s-processando">Processando</span><p>Enviado ao autorizador; conta a tentativa.</p></div>
+            <div class="seta"></div>
+            <div class="no"><span class="estado-dot s-autorizado">Resposta</span><p>Cada transição entra no histórico.</p></div>
+          </div>
+          <svg class="garfo" viewBox="0 0 64 300" aria-hidden="true">
+            <path d="M0 150 C 32 150, 32 40, 60 40" class="ramo"/>
+            <path d="M0 150 L 60 150" class="ramo"/>
+            <path d="M0 150 C 32 150, 32 260, 60 260" class="ramo"/>
+          </svg>
+          <div class="saidas">
+            <div class="saida s-autorizado"><b>Autorizado</b><span>gera protocolo; a moto vira Vendida. Gerente pode cancelar.</span></div>
+            <div class="saida s-pendente"><b>Pendente</b><span>autorizador fora do ar; reenvio depois, até 3 tentativas.</span></div>
+            <div class="saida s-rejeitado"><b>Rejeitado</b><span>dados recusados ou 3 tentativas sem resposta.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Organização do código -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">04 / 08</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">Organização do código · quem fez o quê</div>
+          <h2 class="animate delay-2">Pacotes por responsabilidade, commits por autor</h2>
+        </div>
+        <div class="org">
+          <pre class="arvore animate delay-2"><span class="d">src/emiteja/</span>
+  <span class="d">app/</span>      Main · TelaVenda · Demonstracao
+  <span class="d">servico/</span>  Loja
+  <span class="d">modelo/</span>   Pessoa · Cliente · Usuario · Moto
+            Venda · DocumentoFiscal
+            PoliticaImposto · AliquotaUnica
+            PorCilindrada
+<span class="d">teste/emiteja/teste/</span>
+            SuiteDeTeste · ExecutarTestes
+            5 suítes · Dados
+<span class="d">rodar.bat · demonstracao.bat · testar.bat</span></pre>
+          <div class="card-grid">
+            <article class="card animate delay-3"><div class="card-label">Ednaldo</div><p>Moto e Cliente, encapsulamento, validação de CPF, CNPJ e chassi, classe abstrata <b>Pessoa</b>. Testes de pessoas e moto.</p></article>
+            <article class="card animate delay-4"><div class="card-label">Kayk</div><p>Usuario e Venda, reserva, venda e cancelamento, a <b>TelaVenda</b> em JOptionPane e a troca de política. Testes da Loja.</p></article>
+            <article class="card destaque animate delay-5"><div class="card-label">Abraão</div><p><b>DocumentoFiscal</b> e seus estados, <b>Loja</b>, políticas A e B, pacotes. Executor de testes, testes de imposto e documento, scripts.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Padrões utilizados -->
+    <section class="slide grid-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">05 / 08</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">Padrões utilizados</div>
+          <h2 class="animate delay-2">Cada padrão resolve um requisito do desafio</h2>
+        </div>
+        <div class="card-grid cols-3">
+          <article class="card destaque animate delay-1"><div class="card-label">Strategy</div><h3>Política de imposto trocável</h3><p>A Loja guarda uma <span class="mono">PoliticaImposto</span>; trocar A por B muda o cálculo sem mexer no resto.</p></article>
+          <article class="card animate delay-2"><div class="card-label">Template Method</div><h3>calcular() fixo, aliquota() variável</h3><p>A classe abstrata arredonda e valida; cada subclasse só diz a alíquota.</p></article>
+          <article class="card animate delay-3"><div class="card-label">Máquina de estados</div><h3>DocumentoFiscal</h3><p>Transições controladas e registradas; estado inválido gera exceção.</p></article>
+          <article class="card animate delay-4"><div class="card-label">Idempotência</div><h3>Sem nota duplicada</h3><p><span class="mono">emitir()</span> da mesma venda devolve o documento que já existe.</p></article>
+          <article class="card animate delay-5"><div class="card-label">Herança e polimorfismo</div><h3>Pessoa ▸ Cliente, Usuario</h3><p>Nome validado na mãe; cada filha sobrescreve <span class="mono">getIdentificacao()</span>.</p></article>
+          <article class="card animate delay-6"><div class="card-label">Encapsulamento</div><h3>Setters que validam</h3><p>Atributos privados, listas devolvidas como cópia (<span class="mono">List.copyOf</span>).</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · Testes -->
+    <section class="slide stats-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">06 / 08</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">Testes já executáveis</div>
+          <h2 class="animate delay-2">Um clique em <span class="mono accent-text">testar.bat</span> e tudo roda</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card destaque animate delay-1"><div class="stat-value">39</div><div class="stat-label">testes aprovados</div><p>CPF, chassi, impostos, estados, duplicidade, cancelamento.</p></div>
+          <div class="stat-card animate delay-2"><div class="stat-value">5</div><div class="stat-label">suítes</div><p>Pessoas, Moto, Imposto, Documento fiscal, Loja.</p></div>
+          <div class="stat-card animate delay-3"><div class="stat-value">0</div><div class="stat-label">falhas</div><p>Se algo quebrar, o executor sai com código 1.</p></div>
+          <div class="stat-card animate delay-4"><div class="stat-value">0</div><div class="stat-label">bibliotecas</div><p>Java puro: herdam de <span class="mono">SuiteDeTeste</span>.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · Demonstração -->
+    <section class="slide steps-slide">
+      <div class="slide-inner">
+        <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
+        <div class="slide-counter">07 / 08</div>
+        <div class="section-heading">
+          <div class="eyebrow animate delay-1">Demonstração parcial · rodar.bat</div>
+          <h2 class="animate delay-2">Uma venda do começo ao cancelamento</h2>
+        </div>
+        <ol class="steps-list">
+          <li class="step animate delay-1"><span class="step-num">01</span><div class="step-copy"><h3>Vender a CG 160</h3><p>Menu 3: o documento sai Autorizado com protocolo SIM.</p></div><span class="tag">Autorizado</span></li>
+          <li class="step animate delay-2"><span class="step-num">02</span><div class="step-copy"><h3>Derrubar o autorizador e vender de novo</h3><p>Menu 7 → Indisponível, menu 3: o documento fica Pendente.</p></div><span class="tag">Pendente</span></li>
+          <li class="step animate delay-3"><span class="step-num">03</span><div class="step-copy"><h3>Voltar o autorizador e reenviar</h3><p>Menu 7 → Sucesso, menu 5: o pendente é autorizado.</p></div><span class="tag">Reenvio</span></li>
+          <li class="step animate delay-4"><span class="step-num">04</span><div class="step-copy"><h3>Trocar para a variante B</h3><p>Menu 9: a próxima venda paga 8, 12 ou 18% pela cilindrada.</p></div><span class="tag">Strategy</span></li>
+          <li class="step animate delay-5"><span class="step-num">05</span><div class="step-copy"><h3>Cancelar como gerente</h3><p>Menu 6 como Sandra: justificativa de 15 caracteres, a moto volta ao estoque.</p></div><span class="tag">Cancelado</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 08 · Encerramento -->
+    <section class="slide closing-slide">
+      <div class="slide-inner">
+        <div class="slide-counter">08 / 08</div>
+        <div class="closing-content">
+          <div class="hero-logo animate delay-1">
+            <svg role="img" aria-label="Logo do EmiteJá"><use href="#logo"/></svg>
+            <span class="marca">Emite<em>Já</em></span>
+          </div>
+          <h2 class="animate delay-2">Próximos passos até a <span class="accent-text">entrega final</span></h2>
+          <p class="subtitle animate delay-3">Diagramas de classes e de sequência atualizados para o código Java, mais casos de teste para a tela e para a rejeição de venda.</p>
+          <div class="cta-row animate delay-4">
+            <a href="https://github.com/Abraaog/AutomacaoNotaFiscal" class="btn btn-primary" target="_blank" rel="noopener">Repositório no GitHub</a>
+          </div>
+          <div class="hero-meta animate delay-5">
+            <div><span>Equipe · Grupo 04</span><b>Abraão Gomes · Ednaldo Guilherme · Kayk Thierry</b></div>
+            <div><span>Obrigado</span><b>Perguntas?</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsContainer = document.querySelector('.dot-nav');
+
+    function scrollToSlide(index) {
+      const clamped = Math.max(0, Math.min(index, slides.length - 1));
+      slides[clamped].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function buildDots() {
+      slides.forEach((slide, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('aria-label', `Ir para o slide ${index + 1}`);
+        btn.addEventListener('click', () => scrollToSlide(index));
+        dotsContainer.appendChild(btn);
+      });
+    }
+
+    function setActiveDot(index) {
+      dotsContainer.querySelectorAll('button').forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+        if (i === index) dot.setAttribute('aria-current', 'step');
+        else dot.removeAttribute('aria-current');
+      });
+    }
+
+    const slideObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActiveDot(slides.indexOf(entry.target));
+      });
+    }, { threshold: 0.6 });
+
+    const animationObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          animationObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    function initObservers() {
+      slides.forEach((slide) => slideObserver.observe(slide));
+      document.querySelectorAll('.animate').forEach((el) => animationObserver.observe(el));
+    }
+
+    function getCurrentSlideIndex() {
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      slides.forEach((slide, index) => {
+        const distance = Math.abs(slide.getBoundingClientRect().top);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      return closestIndex;
+    }
+
+    document.addEventListener('keydown', (event) => {
+      const atual = getCurrentSlideIndex();
+      if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(event.key)) {
+        event.preventDefault();
+        scrollToSlide(atual + 1);
+      }
+      if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.key)) {
+        event.preventDefault();
+        scrollToSlide(atual - 1);
+      }
+      if (event.key === 'Home') { event.preventDefault(); scrollToSlide(0); }
+      if (event.key === 'End') { event.preventDefault(); scrollToSlide(slides.length - 1); }
+    });
+
+    buildDots();
+    initObservers();
+    setActiveDot(0);
+  </script>
+</body>
+</html>

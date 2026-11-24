@@ -75,6 +75,7 @@ São 39 testes em Java puro, sem JUnit, para rodar em qualquer JDK sem configura
 - [Roteiro de Entrevista (Etapa 01)](docs/roteiro-de-entrevista.md)
 - [Backlog do Produto (Etapa 02)](docs/backlog-do-produto.md)
 - [Projeto Preliminar (apresentação parcial)](docs/projeto-preliminar.md)
+- [Slides da Apresentação Parcial 2](docs/apresentacao-parcial-2.html)
 - [Documento de Requisitos (Etapa 05)](docs/documento-de-requisitos.md)
 - [Documento de Requisitos (.docx para entrega)](docs/DocumentoDeRequisitosEmiteJa.docx)
 
