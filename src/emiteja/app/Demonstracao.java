@@ -1,5 +1,7 @@
 package emiteja.app;
 
+import emiteja.factory.CriadorNotificadorCliente;
+import emiteja.factory.CriadorPainel;
 import emiteja.modelo.Cliente;
 import emiteja.modelo.DocumentoFiscal;
 import emiteja.modelo.Moto;
@@ -7,6 +9,7 @@ import emiteja.modelo.Pessoa;
 import emiteja.modelo.PorCilindrada;
 import emiteja.modelo.Usuario;
 import emiteja.servico.Loja;
+import emiteja.singleton.PainelDocumentos;
 
 public class Demonstracao {
 
@@ -20,6 +23,9 @@ public class Demonstracao {
         Cliente empresa = new Cliente("Auto Peças Rio Tinto LTDA", "11.222.333/0001-81", "Av. Brasil, 50", "contato@autopecas.com");
         Usuario vendedor = new Usuario("Marcos Lima", "marcos", "Vendedor");
         Usuario gerente = new Usuario("Sandra Melo", "sandra", "Gerente");
+
+        new CriadorNotificadorCliente().cadastrarNaLoja(loja);
+        new CriadorPainel().cadastrarNaLoja(loja);
 
         System.out.println("==== Estoque inicial: " + loja.getMotosDisponiveis() + " motos disponíveis ====");
 
@@ -72,5 +78,9 @@ public class Demonstracao {
         for (Pessoa pessoa : pessoas) {
             System.out.println(pessoa);
         }
+
+        System.out.println("\n==== Singleton: o painel é um só ====");
+        System.out.println("Mesmo painel? " + (PainelDocumentos.getInstancia() == PainelDocumentos.getInstancia()));
+        PainelDocumentos.getInstancia().exibirPainel();
     }
 }

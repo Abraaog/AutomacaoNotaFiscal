@@ -1,5 +1,8 @@
 package emiteja.app;
 
+import emiteja.factory.CriadorNotificadorCliente;
+import emiteja.factory.CriadorObservador;
+import emiteja.factory.CriadorPainel;
 import emiteja.modelo.Moto;
 import emiteja.modelo.Usuario;
 import emiteja.servico.Loja;
@@ -18,6 +21,11 @@ public class Main {
                 new Usuario("Sandra Melo", "sandra", "Gerente"),
                 new Usuario("Marcos Lima", "marcos", "Vendedor"),
                 new Usuario("Fábio Costa", "fabio", "Contador"));
+
+        CriadorObservador[] criadores = {new CriadorNotificadorCliente(), new CriadorPainel()};
+        for (CriadorObservador criador : criadores) {
+            criador.cadastrarNaLoja(loja);
+        }
 
         new TelaVenda(loja, usuarios).abrir();
     }

@@ -8,6 +8,7 @@ import emiteja.modelo.PoliticaImposto;
 import emiteja.modelo.PorCilindrada;
 import emiteja.modelo.Usuario;
 import emiteja.servico.Loja;
+import emiteja.singleton.PainelDocumentos;
 
 import javax.swing.JOptionPane;
 import java.util.List;
@@ -68,6 +69,7 @@ public class TelaVenda {
                 + "\n7 - Trocar cenário do autorizador"
                 + "\n8 - Trocar usuário"
                 + "\n9 - Trocar política de imposto"
+                + "\n10 - Painel de documentos"
                 + "\n0 - Sair";
     }
 
@@ -82,6 +84,7 @@ public class TelaVenda {
             case 7 -> trocarCenario();
             case 8 -> usuarioAtual = escolher("Entrar como:", usuarios.toArray(new Usuario[0]));
             case 9 -> trocarPolitica();
+            case 10 -> mostrar(PainelDocumentos.getInstancia().montarPainel());
             case 0 -> mostrar("Até logo!");
             default -> mostrarErro("Opção inválida");
         }

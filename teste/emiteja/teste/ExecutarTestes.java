@@ -14,7 +14,8 @@ public class ExecutarTestes {
                 new TesteDocumentoFiscal(),
                 new TesteLoja(),
                 new TesteObserver(),
-                new TesteNullObject());
+                new TesteNullObject(),
+                new TesteSingletonFactory());
 
         int aprovados = 0;
         List<String> falhas = new ArrayList<>();
