@@ -462,6 +462,9 @@
     .arvore { margin: 0; padding: 24px 26px; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.09); background: rgba(5,20,14,0.55); font: 400 clamp(13.5px, 1.05vw, 16px)/1.7 "IBM Plex Mono", monospace; color: var(--text-soft); white-space: pre; overflow: hidden; }
     .arvore .d { color: var(--accent); }
     .stat-card p { font-size: 14.5px; }
+    .padroes .card { padding: 16px 18px; gap: 6px; }
+    .padroes .card h3 { font-size: clamp(16px, 1.3vw, 19px); }
+    .padroes .card p { font-size: 14px; }
     @media (max-width: 1100px) { .org { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -519,7 +522,7 @@
         <div class="slide-counter">02 / 08</div>
         <div class="section-heading">
           <div class="eyebrow animate delay-1">Arquitetura implementada</div>
-          <h2 class="animate delay-2">Três camadas, cada uma só conversa com a de baixo</h2>
+          <h2 class="animate delay-2">Três camadas e um pacote para cada padrão</h2>
         </div>
         <div class="camadas">
           <div class="camada animate delay-2">
@@ -530,7 +533,11 @@
             <div><h3>servico</h3><div class="papel">Regras da loja</div></div>
             <div class="pecas"><span class="peca">Loja</span><span class="peca">vender()</span><span class="peca">emitir()</span><span class="peca">reenviarPendentes()</span><span class="peca">cancelar()</span></div>
           </div>
-          <div class="camada dominio animate delay-4">
+          <div class="camada animate delay-4">
+            <div><h3>padrões</h3><div class="papel">Avisos e criação de objetos</div></div>
+            <div class="pecas"><span class="peca">observer</span><span class="peca">notificacao</span><span class="peca">singleton</span><span class="peca">factory</span></div>
+          </div>
+          <div class="camada dominio animate delay-5">
             <div><h3>modelo</h3><div class="papel">Domínio e validações</div></div>
             <div class="pecas"><span class="peca">Pessoa ▸ Cliente, Usuario</span><span class="peca">Moto</span><span class="peca">Venda</span><span class="peca">DocumentoFiscal</span><span class="peca">PoliticaImposto ▸ A, B</span></div>
           </div>
@@ -580,24 +587,25 @@
         <div class="slide-counter">04 / 08</div>
         <div class="section-heading">
           <div class="eyebrow animate delay-1">Organização do código · quem fez o quê</div>
-          <h2 class="animate delay-2">Pacotes por responsabilidade, commits por autor</h2>
+          <h2 class="animate delay-2" style="max-width:none">Pacotes por responsabilidade, commits por autor</h2>
         </div>
         <div class="org">
           <pre class="arvore animate delay-2"><span class="d">src/emiteja/</span>
   <span class="d">app/</span>      Main · TelaVenda · Demonstracao
   <span class="d">servico/</span>  Loja
-  <span class="d">modelo/</span>   Pessoa · Cliente · Usuario · Moto
-            Venda · DocumentoFiscal
-            PoliticaImposto · AliquotaUnica
-            PorCilindrada
+  <span class="d">modelo/</span>   Pessoa · Cliente · Usuario · Moto · Venda
+            DocumentoFiscal · PoliticaImposto (A, B)
+  <span class="d">observer/</span> ObservadorDocumento · NotificadorCliente
+  <span class="d">notificacao/</span> Notificador · Email · Nulo
+  <span class="d">singleton/</span> PainelDocumentos
+  <span class="d">factory/</span>  CriadorObservador · Notificador · Painel
 <span class="d">teste/emiteja/teste/</span>
-            SuiteDeTeste · ExecutarTestes
-            5 suítes · Dados
+            SuiteDeTeste · ExecutarTestes · 8 suítes
 <span class="d">rodar.bat · demonstracao.bat · testar.bat</span></pre>
           <div class="card-grid">
-            <article class="card animate delay-3"><div class="card-label">Ednaldo</div><p>Moto e Cliente, encapsulamento, validação de CPF, CNPJ e chassi, classe abstrata <b>Pessoa</b>. Testes de pessoas e moto.</p></article>
-            <article class="card animate delay-4"><div class="card-label">Kayk</div><p>Usuario e Venda, reserva, venda e cancelamento, a <b>TelaVenda</b> em JOptionPane e a troca de política. Testes da Loja.</p></article>
-            <article class="card destaque animate delay-5"><div class="card-label">Abraão</div><p><b>DocumentoFiscal</b> e seus estados, <b>Loja</b>, políticas A e B, pacotes. Executor de testes, testes de imposto e documento, scripts.</p></article>
+            <article class="card animate delay-3"><div class="card-label">Ednaldo</div><p>Moto e Cliente, encapsulamento, validação de CPF, CNPJ e chassi, classe abstrata <b>Pessoa</b>, aviso ao cliente com <b>Null Object</b>. Testes de pessoas, moto e Null Object.</p></article>
+            <article class="card animate delay-4"><div class="card-label">Kayk</div><p>Usuario e Venda, reserva, venda e cancelamento, a <b>TelaVenda</b> em JOptionPane, painel <b>Singleton</b> e <b>Factory Method</b>. Testes da Loja e desses padrões.</p></article>
+            <article class="card destaque animate delay-5"><div class="card-label">Abraão</div><p><b>DocumentoFiscal</b> e seus estados, <b>Loja</b>, <b>Strategy</b> das políticas A e B, <b>Observer</b>. Executor de testes e testes de imposto, documento e Observer.</p></article>
           </div>
         </div>
       </div>
@@ -610,15 +618,17 @@
         <div class="slide-counter">05 / 08</div>
         <div class="section-heading">
           <div class="eyebrow animate delay-1">Padrões utilizados</div>
-          <h2 class="animate delay-2">Cada padrão resolve um requisito do desafio</h2>
+          <h2 class="animate delay-2">Os padrões da disciplina, cada um com um papel no EmiteJá</h2>
         </div>
-        <div class="card-grid cols-3">
-          <article class="card destaque animate delay-1"><div class="card-label">Strategy</div><h3>Política de imposto trocável</h3><p>A Loja guarda uma <span class="mono">PoliticaImposto</span>; trocar A por B muda o cálculo sem mexer no resto.</p></article>
-          <article class="card animate delay-2"><div class="card-label">Template Method</div><h3>calcular() fixo, aliquota() variável</h3><p>A classe abstrata arredonda e valida; cada subclasse só diz a alíquota.</p></article>
-          <article class="card animate delay-3"><div class="card-label">Máquina de estados</div><h3>DocumentoFiscal</h3><p>Transições controladas e registradas; estado inválido gera exceção.</p></article>
-          <article class="card animate delay-4"><div class="card-label">Idempotência</div><h3>Sem nota duplicada</h3><p><span class="mono">emitir()</span> da mesma venda devolve o documento que já existe.</p></article>
-          <article class="card animate delay-5"><div class="card-label">Herança e polimorfismo</div><h3>Pessoa ▸ Cliente, Usuario</h3><p>Nome validado na mãe; cada filha sobrescreve <span class="mono">getIdentificacao()</span>.</p></article>
-          <article class="card animate delay-6"><div class="card-label">Encapsulamento</div><h3>Setters que validam</h3><p>Atributos privados, listas devolvidas como cópia (<span class="mono">List.copyOf</span>).</p></article>
+        <div class="card-grid cols-4 padroes">
+          <article class="card destaque animate delay-1"><div class="card-label">Strategy</div><h3>PoliticaImposto</h3><p>A Loja troca a variante A (10%) pela B (por cilindrada) sem mudar a emissão.</p></article>
+          <article class="card destaque animate delay-2"><div class="card-label">Observer</div><h3>Loja avisa observadores</h3><p>Emitir, reenviar e cancelar disparam <span class="mono">documentoAtualizado()</span>.</p></article>
+          <article class="card animate delay-3"><div class="card-label">Factory Method</div><h3>CriadorObservador</h3><p><span class="mono">criarObservador()</span> decide o que fabricar; o cadastro na Loja é igual.</p></article>
+          <article class="card animate delay-4"><div class="card-label">Singleton</div><h3>PainelDocumentos</h3><p>Construtor privado e <span class="mono">getInstancia()</span>: um painel só.</p></article>
+          <article class="card animate delay-1"><div class="card-label">Null Object</div><h3>NotificadorNulo</h3><p>Cliente sem e-mail recebe um notificador que não faz nada: nenhum <span class="mono">if null</span>.</p></article>
+          <article class="card animate delay-2"><div class="card-label">Facade</div><h3>Loja</h3><p>A tela só fala com a Loja, que esconde estoque, documento e imposto.</p></article>
+          <article class="card animate delay-3"><div class="card-label">Template Method</div><h3>calcular() e SuiteDeTeste</h3><p>Passo fixo na classe abstrata, detalhe na subclasse.</p></article>
+          <article class="card animate delay-4"><div class="card-label">Herança e composição</div><h3>Pessoa, Venda</h3><p>Cliente e Usuario herdam de Pessoa; a Venda é composta de Moto, Cliente e vendedor.</p></article>
         </div>
       </div>
     </section>
@@ -630,11 +640,11 @@
         <div class="slide-counter">06 / 08</div>
         <div class="section-heading">
           <div class="eyebrow animate delay-1">Testes já executáveis</div>
-          <h2 class="animate delay-2">Um clique em <span class="mono accent-text">testar.bat</span> e tudo roda</h2>
+          <h2 class="animate delay-2">Um comando roda <span class="accent-text">todos os testes</span></h2>
         </div>
         <div class="stats-grid">
-          <div class="stat-card destaque animate delay-1"><div class="stat-value">39</div><div class="stat-label">testes aprovados</div><p>CPF, chassi, impostos, estados, duplicidade, cancelamento.</p></div>
-          <div class="stat-card animate delay-2"><div class="stat-value">5</div><div class="stat-label">suítes</div><p>Pessoas, Moto, Imposto, Documento fiscal, Loja.</p></div>
+          <div class="stat-card destaque animate delay-1"><div class="stat-value">52</div><div class="stat-label">testes aprovados</div><p>CPF, chassi, impostos, estados, duplicidade, cancelamento.</p></div>
+          <div class="stat-card animate delay-2"><div class="stat-value">8</div><div class="stat-label">suítes</div><p>Domínio, Loja e uma suíte para cada padrão novo.</p></div>
           <div class="stat-card animate delay-3"><div class="stat-value">0</div><div class="stat-label">falhas</div><p>Se algo quebrar, o executor sai com código 1.</p></div>
           <div class="stat-card animate delay-4"><div class="stat-value">0</div><div class="stat-label">bibliotecas</div><p>Java puro: herdam de <span class="mono">SuiteDeTeste</span>.</p></div>
         </div>
@@ -647,14 +657,14 @@
         <div class="slide-brand"><svg aria-hidden="true"><use href="#logo"/></svg>Emite<em>Já</em></div>
         <div class="slide-counter">07 / 08</div>
         <div class="section-heading">
-          <div class="eyebrow animate delay-1">Demonstração parcial · rodar.bat</div>
+          <div class="eyebrow animate delay-1">Demonstração parcial · emiteja.app.Main</div>
           <h2 class="animate delay-2">Uma venda do começo ao cancelamento</h2>
         </div>
         <ol class="steps-list">
-          <li class="step animate delay-1"><span class="step-num">01</span><div class="step-copy"><h3>Vender a CG 160</h3><p>Menu 3: o documento sai Autorizado com protocolo SIM.</p></div><span class="tag">Autorizado</span></li>
+          <li class="step animate delay-1"><span class="step-num">01</span><div class="step-copy"><h3>Vender a CG 160</h3><p>Menu 3: sai Autorizado com protocolo SIM, e o e-mail do cliente aparece no console (Observer).</p></div><span class="tag">Autorizado</span></li>
           <li class="step animate delay-2"><span class="step-num">02</span><div class="step-copy"><h3>Derrubar o autorizador e vender de novo</h3><p>Menu 7 → Indisponível, menu 3: o documento fica Pendente.</p></div><span class="tag">Pendente</span></li>
           <li class="step animate delay-3"><span class="step-num">03</span><div class="step-copy"><h3>Voltar o autorizador e reenviar</h3><p>Menu 7 → Sucesso, menu 5: o pendente é autorizado.</p></div><span class="tag">Reenvio</span></li>
-          <li class="step animate delay-4"><span class="step-num">04</span><div class="step-copy"><h3>Trocar para a variante B</h3><p>Menu 9: a próxima venda paga 8, 12 ou 18% pela cilindrada.</p></div><span class="tag">Strategy</span></li>
+          <li class="step animate delay-4"><span class="step-num">04</span><div class="step-copy"><h3>Abrir o painel</h3><p>Menu 10: o painel único mostra o estado de cada documento.</p></div><span class="tag">Singleton</span></li>
           <li class="step animate delay-5"><span class="step-num">05</span><div class="step-copy"><h3>Cancelar como gerente</h3><p>Menu 6 como Sandra: justificativa de 15 caracteres, a moto volta ao estoque.</p></div><span class="tag">Cancelado</span></li>
         </ol>
       </div>

@@ -42,19 +42,36 @@ Usuários de exemplo: `sandra` (Gerente, pode cancelar), `marcos` (Vendedor) e `
 src/emiteja/
 ├── modelo/    Moto, Cliente, Usuario, Pessoa (abstrata), Venda, DocumentoFiscal,
 │              PoliticaImposto (abstrata), AliquotaUnica, PorCilindrada
-├── servico/   Loja (estoque, vendas, emissão e cancelamento)
+├── servico/   Loja (estoque, vendas, emissão e cancelamento; avisa os observadores)
+├── observer/  ObservadorDocumento (interface), NotificadorCliente
+├── notificacao/ Notificador (abstrata), NotificadorEmail, NotificadorNulo (Null Object)
+├── singleton/ PainelDocumentos (instância única)
+├── factory/   CriadorObservador (factory method), CriadorNotificadorCliente, CriadorPainel
 └── app/       Main, TelaVenda (JOptionPane), Demonstracao (console)
 
 teste/emiteja/teste/
 ├── SuiteDeTeste     base abstrata dos testes (Java puro, sem biblioteca)
 ├── ExecutarTestes   roda todas as suítes; sai com código 1 se algo falhar
 ├── TestePessoas, TesteMoto, TesteImposto, TesteDocumentoFiscal, TesteLoja
+├── TesteObserver, TesteNullObject, TesteSingletonFactory
 └── Dados            motos, clientes e usuários de exemplo
 ```
 
+## Padrões de projeto
+
+| Padrão | Onde | Para quê |
+|---|---|---|
+| Strategy | `PoliticaImposto` com `AliquotaUnica` (A) e `PorCilindrada` (B); `Loja.setPoliticaAtiva()` | trocar a regra de imposto sem mexer na emissão |
+| Observer | `ObservadorDocumento`; a `Loja` cadastra, remove e avisa os observadores | cada emissão, reenvio e cancelamento avisa o cliente e o painel |
+| Factory Method | `CriadorObservador.criarObservador()`, com `CriadorNotificadorCliente` e `CriadorPainel` | o `Main` cadastra observadores sem saber qual classe concreta é criada |
+| Singleton | `PainelDocumentos.getInstancia()` | um único painel com o estado atual de cada documento (menu 10) |
+| Null Object | `NotificadorNulo` | cliente sem e-mail (ou canal nulo) recebe um notificador que não faz nada, sem `if (x == null)` |
+| Facade | `Loja` | a tela só conversa com a Loja, que esconde estoque, documento, imposto e avisos |
+| Template Method | `PoliticaImposto.calcular()` e `SuiteDeTeste.rodar()` | o passo fixo fica na classe abstrata e o detalhe na subclasse |
+
 ## Testes
 
-São 39 testes em Java puro, sem JUnit, para rodar em qualquer JDK sem configurar nada. Cada suíte herda de `SuiteDeTeste` (classe abstrata, padrão Template Method) e chama `teste("descrição", () -> { ... })` para cada caso. Cobrem as validações de CPF, CNPJ e chassi, as duas políticas de imposto, todos os estados do documento fiscal (Rascunho, Processando, Autorizado, Rejeitado, Pendente e Cancelado), a prevenção de duplicidade, o reenvio de pendentes e a permissão de cancelamento só para a gerência.
+São 52 testes em 8 suítes, em Java puro, sem JUnit, para rodar em qualquer JDK sem configurar nada. Cada suíte herda de `SuiteDeTeste` (classe abstrata, padrão Template Method) e chama `teste("descrição", () -> { ... })` para cada caso. Cobrem as validações de CPF, CNPJ e chassi, as duas políticas de imposto, todos os estados do documento fiscal (Rascunho, Processando, Autorizado, Rejeitado, Pendente e Cancelado), a prevenção de duplicidade, o reenvio de pendentes, a permissão de cancelamento só para a gerência e os padrões Observer, Null Object, Singleton e Factory Method.
 
 ## Entregas por partes
 
@@ -67,7 +84,7 @@ São 39 testes em Java puro, sem JUnit, para rodar em qualquer JDK sem configura
 | 2 | @Override | `toString()` das classes de modelo; `getIdentificacao()` e `aliquota()` nas subclasses |
 | 2 | Encapsulamento | atributos `private`, getters e setters que validam (`setPreco`, `setNome`) |
 | 2 | Métodos Auxiliares | `cpfValido()`, `cnpjValido()`, `digitoVerificador()` no `Cliente`; `chassiValido()` na `Moto`; `lerTexto()`, `escolher()` na tela |
-| Pacotes | Pacotes | `emiteja.modelo`, `emiteja.servico` e `emiteja.app` |
+| Pacotes | Pacotes | `emiteja.modelo`, `emiteja.servico`, `emiteja.app` e um pacote por padrão (`observer`, `notificacao`, `singleton`, `factory`) |
 | 3 | Herança, Classe Abstrata, Super | `Pessoa` (abstrata) com `Cliente` e `Usuario`; `PoliticaImposto` (abstrata) com `AliquotaUnica` e `PorCilindrada`; construtores com `super(...)` |
 
 ## Documentação
