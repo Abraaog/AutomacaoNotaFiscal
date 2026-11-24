@@ -13,7 +13,8 @@ public class ExecutarTestes {
                 new TesteImposto(),
                 new TesteDocumentoFiscal(),
                 new TesteLoja(),
-                new TesteObserver());
+                new TesteObserver(),
+                new TesteNullObject());
 
         int aprovados = 0;
         List<String> falhas = new ArrayList<>();
