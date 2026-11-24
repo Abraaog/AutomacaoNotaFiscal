@@ -15,15 +15,24 @@ O cliente considerado é fictício: a Rota Motos, revenda de motos novas.
 
 Requisito: JDK 17 ou superior.
 
-Pelo IntelliJ IDEA: abra a pasta do projeto e rode a classe `emiteja.app.Main` (menu em JOptionPane) ou `emiteja.app.Demonstracao` (roteiro completo no console).
+No Windows, sem IntelliJ, basta dar dois cliques (ou chamar no terminal):
 
-Pelo terminal:
+| Script | O que faz |
+|---|---|
+| `rodar.bat` | abre o sistema com o menu em janelas (JOptionPane) |
+| `demonstracao.bat` | roda no console o roteiro completo: venda, duplicidade, pendente, rejeição e cancelamento |
+| `testar.bat` | compila e roda todos os testes (`emiteja.teste.ExecutarTestes`) |
+
+Pelo terminal, em qualquer sistema (no Linux/macOS troque `;` por `:` no `-sourcepath`):
 
 ```bash
-javac -d out $(find src -name "*.java")
-java -cp out emiteja.app.Main            # menu em janelas (JOptionPane)
-java -cp out emiteja.app.Demonstracao    # demonstração no console
+javac -encoding UTF-8 -d out -sourcepath "src;teste" teste/emiteja/teste/ExecutarTestes.java src/emiteja/app/Main.java src/emiteja/app/Demonstracao.java
+java -cp out emiteja.app.Main               # menu em janelas (JOptionPane)
+java -cp out emiteja.app.Demonstracao       # demonstração no console
+java -cp out emiteja.teste.ExecutarTestes   # testes
 ```
+
+Pelo IntelliJ IDEA: abra a pasta do projeto e rode `emiteja.app.Main`, `emiteja.app.Demonstracao` ou `emiteja.teste.ExecutarTestes`.
 
 Usuários de exemplo: `sandra` (Gerente, pode cancelar), `marcos` (Vendedor) e `fabio` (Contador). A emissão é simulada: nenhum documento tem valor fiscal.
 
@@ -35,7 +44,17 @@ src/emiteja/
 │              PoliticaImposto (abstrata), AliquotaUnica, PorCilindrada
 ├── servico/   Loja (estoque, vendas, emissão e cancelamento)
 └── app/       Main, TelaVenda (JOptionPane), Demonstracao (console)
+
+teste/emiteja/teste/
+├── SuiteDeTeste     base abstrata dos testes (Java puro, sem biblioteca)
+├── ExecutarTestes   roda todas as suítes; sai com código 1 se algo falhar
+├── TestePessoas, TesteMoto, TesteImposto, TesteDocumentoFiscal, TesteLoja
+└── Dados            motos, clientes e usuários de exemplo
 ```
+
+## Testes
+
+São 39 testes em Java puro, sem JUnit, para rodar em qualquer JDK sem configurar nada. Cada suíte herda de `SuiteDeTeste` (classe abstrata, padrão Template Method) e chama `teste("descrição", () -> { ... })` para cada caso. Cobrem as validações de CPF, CNPJ e chassi, as duas políticas de imposto, todos os estados do documento fiscal (Rascunho, Processando, Autorizado, Rejeitado, Pendente e Cancelado), a prevenção de duplicidade, o reenvio de pendentes e a permissão de cancelamento só para a gerência.
 
 ## Entregas por partes
 
